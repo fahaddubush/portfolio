@@ -1,0 +1,24 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const root = __dirname;
+const read = p => fs.readFileSync(path.resolve(root, p), 'utf8');
+const site = JSON.parse(read(process.env.PORTFOLIO_CONTENT || 'content.json'));
+const esc = x => String(x).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const slug = x => x.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const url = x => /^(#|https?:|mailto:)/i.test(x) ? x : '#contact';
+const artwork = c => `<div class="viz" style="--a:${esc(c[0])};--b:${esc(c[1])};--c:${esc(c[2])}" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b></div>`;
+const list = a => a.map(x => `<li>${esc(x)}</li>`).join('');
+const mq = site.skills.map(x=>`<span>${esc(x)}</span><i></i>`).join('').repeat(2);
+const page=read('src/page.js');
+const icons=JSON.parse(page.match(/const IC = (\{[\s\S]*?\n\});/)[1]);
+const socials=site.socials.map(([name,link,key],i)=>{const href=url(key==='email'?'mailto:'+site.email:link);return `<a class="soc glass mag" style="--i:${i}" href="${esc(href)}"${/^https?:/i.test(href)?' target="_blank" rel="noopener noreferrer"':''} aria-label="${esc(name)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[key]||''}"/></svg><span>${esc(name)}</span></a>`}).join('');
+const cards=site.projects.map((p,i)=>`<a class="card glass rv" data-i="${i}" href="#project-${esc(slug(p.n))}" aria-label="Read case study: ${esc(p.n)}">${artwork(p.c)}<div class="meta"><div><h3>${esc(p.n)}</h3><p>${esc(p.t)}</p></div><ul class="tags">${list([p.y,...p.s])}</ul></div></a>`).join('\n');
+const cases=site.projects.map(p=>`<article class="fallback-case glass" id="project-${esc(slug(p.n))}">${artwork(p.c)}<h3>${esc(p.n)}</h3><p>${esc(p.t)}. ${esc(p.d)}</p><ul class="res">${list(p.r)}</ul><ul class="tags">${list(p.s)}</ul><p>${p.l.map(([label,link])=>{const href=url(link);return `<a class="btn glass" href="${esc(href)}"${/^https?:/i.test(href)?' target="_blank" rel="noopener noreferrer"':''}>${esc(label)}</a>`}).join('')}</p><a class="btn" href="#work">Back to work</a></article>`).join('\n');
+const cv=site.cv;
+const values={STYLES:read('src/styles.css'),TITLE:esc(site.name)+' — AI engineer',HERO:site.lines.map(x=>`<span class="ln">${esc(x)}</span>`).join(' '),INTRO:site.intro,STATUS:esc(site.status),MARQUEE1:`<div class="mq" id="m1">${mq}</div>`,MARQUEE2:`<div class="mq o" id="m2">${mq}</div>`,CARDS:`<div id="cards">${cards}</div>`,ABOUT:esc(site.about),EMAIL:`<a class="big mag" id="em" href="mailto:${esc(site.email)}">${esc(site.email)}</a>`,FALLBACK:`<section class="sec fallback-cases" id="fallback-cases" aria-labelledby="case-studies-title"><h2 id="case-studies-title">Case studies</h2>${cases}</section>`,SOCIALS:`<nav class="so" id="so" aria-label="Social">${socials}</nav>`,OUTRO:esc(site.outro),FOOTER:`© 2026 ${esc(site.name)}`,LOGO:`<a class="lg" href="#top" aria-label="${esc(site.name)}, home"><i aria-hidden="true"></i>${esc(site.name.split(' ').map(x=>x[0]||'').join(''))}</a>`,CVTITLE:esc(cv.title),CVLEAD:esc(cv.lead),CVGRID:`<div class="cv-grid">${cv.items.map(x=>`<div class="cv-item glass"><h3>${esc(x.title)}</h3><div class="cv-meta">${esc(x.meta)}</div><p>${esc(x.description)}</p></div>`).join('')}</div>`,CVTAGS:`<ul class="tags">${list(cv.tags)}</ul>`};
+values.SCRIPTS=read('src/sound.js')+'\nconst SITE = '+JSON.stringify(site,null,2).replace(/<\//g,'<\\/')+';\n'+page+'\n'+read('src/graphics.js')+'\n'+read('src/interaction.js');
+let html=read('src/template.html').replace(/\{\{([A-Z0-9]+)\}\}/g, (_, key)=>{if (!(key in values)) throw Error('Unknown placeholder: '+key);return values[key]});
+const output=process.env.PORTFOLIO_OUTPUT || 'dist/portfolio.html';
+fs.mkdirSync(path.dirname(path.resolve(root,output)),{recursive:true});fs.writeFileSync(path.resolve(root,output),html);
+console.log('Built '+output);
+

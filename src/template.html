@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>{{TITLE}}</title>
+<meta name="description" content="Portfolio of AI projects, autonomous agents, multimodal systems, and on-device models.">
+<meta name="theme-color" content="#fbf8ff">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+{{STYLES}}
+</style>
+</head>
+<body>
+<!-- Entrance — Original odometer and three liquid curtains. -->
+<div id="ld" aria-hidden="true"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cdb8ff"/><stop offset=".55" stop-color="#ffd3c2"/><stop offset="1" stop-color="#bdf2dc"/></linearGradient></defs><path id="lp3" fill="#bdf2dc" d="M0 0H100V100Q50 100 0 100Z"/><path id="lp2" fill="#ffd3c2" d="M0 0H100V100Q50 100 0 100Z"/><path id="lp1" fill="url(#lg)" d="M0 0H100V100Q50 100 0 100Z"/></svg><div class="c"><div class="num"><div class="od"><div></div><div></div><div></div></div><b class="pc">%</b></div><p id="ldn"></p></div></div>
+<!-- Graphics — Original liquid-glass art; essential text has an HTML fallback. -->
+<canvas id="gl" aria-hidden="true"></canvas>
+<!-- STATIC:START -->
+  <!-- Navigation — Direct section links stay available on phones. -->
+  <a class="skip" href="#work">Skip to selected work</a>
+  <nav class="nav glass" aria-label="Main">
+    {{LOGO}}
+    <a href="#work">Work</a><a class="about-link" href="#about">About</a><a class="cta" href="#contact">Contact</a>
+  </nav>
+  <!-- Cursor — Fine-pointer enhancement; touch keeps native behavior. -->
+  <div class="cd" aria-hidden="true"></div><div class="cr" aria-hidden="true"></div>
+  <main id="w">
+    <!-- Hero — Identity, introduction and cute CV button. -->
+    <header class="hero" id="top">
+      <h1 id="h1">{{HERO}}</h1>
+      <div class="row">
+        <p class="intro" id="intro">{{INTRO}}</p>
+        <a class="cv-btn glass mag" id="cv-btn" href="#cv" data-cur="CV" aria-haspopup="dialog" aria-label="Open Curriculum Vitae">
+          <span class="cv-logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <defs>
+                <linearGradient id="cvg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#9b7bff"/>
+                  <stop offset="55%" stop-color="#ff9a7b"/>
+                  <stop offset="100%" stop-color="#4ecfa0"/>
+                </linearGradient>
+              </defs>
+              <rect x="4.5" y="4" width="15" height="16" rx="4.5" fill="url(#cvg)" opacity=".25" stroke="#2b2540" stroke-width="1.6"/>
+              <circle cx="9.6" cy="10.5" r="1.2" fill="#2b2540"/>
+              <circle cx="14.4" cy="10.5" r="1.2" fill="#2b2540"/>
+              <path d="M9.7 13.7c1.1 1.15 3.5 1.15 4.6 0" fill="none" stroke="#2b2540" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M8.5 17h7" stroke="#2b2540" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>
+              <path class="spark" d="M19.5 2.2l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z" fill="#9b7bff"/>
+              <path class="spark-2" d="M3.5 17.5l.45 1.15 1.15.45-1.15.45-.45 1.15-.45-1.15-1.15-.45 1.15-.45z" fill="#ff8d6b"/>
+            </svg>
+          </span>
+          <span id="st">{{STATUS}}</span>
+          <span class="cv-badge">CV</span>
+        </a>
+      </div>
+    </header>
+    <!-- Skills — Original twin marquees; decorative copies are hidden from readers. -->
+    <div class="mqs" aria-hidden="true">{{MARQUEE1}}{{MARQUEE2}}</div>
+    <!-- Work — Real links are enhanced into circular case-study reveals. -->
+    <section class="sec" id="work" aria-labelledby="work-title">
+      <h2 class="tt" id="work-title"><span>Selected work</span></h2>
+      {{CARDS}}
+    </section>
+    <!-- About — Word-scrub enhancement over a complete readable paragraph. -->
+    <section class="sec" id="about" aria-labelledby="about-title"><h2 class="sr-only" id="about-title">About</h2><p class="ab" id="ab">{{ABOUT}}</p></section>
+    <!-- Contact — Email works without JavaScript; copy button shows icon and expands on hover. -->
+    <section class="sec" id="contact" aria-labelledby="contact-title">
+      <h2 class="tt" id="contact-title"><span>Let’s talk.</span></h2>
+      <div class="contact-wrap">
+        {{EMAIL}}
+        <div class="js-only">
+          <button class="copy-pill glass mag" id="cp" type="button" aria-label="Copy email address" data-cur="Copy">
+            <svg id="cp-ic" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="9" y="9" width="11" height="11" rx="2.5"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <span id="cp-tx">Copy email</span>
+          </button>
+          <p class="sr-only" id="copy-status" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+    <!-- Static case studies — Real destinations when JavaScript is unavailable. -->
+    {{FALLBACK}}
+    <!-- Footer — Animated social controls (Email, GitHub, LinkedIn — X removed) and closing message. -->
+    <footer><div><p class="end tt" id="end"><span>{{OUTRO}}</span></p>{{SOCIALS}}</div><small id="ft">{{FOOTER}}</small></footer>
+  </main>
+<!-- STATIC:END -->
+
+<!-- Small Floating Sound Toggle Button (bottom-left) — Icon at rest, expands to show small text on hover -->
+<button class="snd glass" id="snd" type="button" aria-pressed="true" aria-label="Toggle ambient soundscape">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+    <path class="wave-1" d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+    <path class="wave-2" d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    <path class="mute-x" d="M22 9l-6 6M16 9l6 6"/>
+  </svg>
+  <span class="snd-lbl" id="snd-lbl">Sound on</span>
+</button>
+
+<button hidden class="up glass" id="up" type="button" aria-label="Back to top"><svg class="rg" viewBox="0 0 46 46" aria-hidden="true"><circle id="rg" cx="23" cy="23" r="21"/></svg><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+
+<!-- Case overlay — Original circle reveal with complete focus containment. -->
+<div id="cs" inert aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="cst"><button class="x glass" type="button" aria-label="Close case study">Close</button><div class="in"><div class="viz"><i></i><i></i><i></i><b></b><b></b><b></b></div><h2 id="cst"></h2><p class="lead"></p><ul class="res"></ul><ul class="tags"></ul><div id="lk"></div></div></div>
+
+<!-- CV Modal — Opens with circular reveal when pressing the CV button in the hero. -->
+<div id="cv-modal" inert aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="cvt" style="--a:#cdb8ff;--b:#ffd3c2">
+  <button class="x glass" id="cv-close" type="button" aria-label="Close Curriculum Vitae">Close</button>
+  <div class="in">
+    <div class="viz" style="--a:#cdb8ff;--b:#bfe0ff;--c:#bdf2dc" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b></div>
+    <h2 id="cvt">{{CVTITLE}}</h2>
+    <p class="lead">{{CVLEAD}}</p>
+    {{CVGRID}}
+{{CVTAGS}}
+    <div>
+      <button class="btn glass" id="cv-print" type="button">Print / Save PDF</button>
+      <a class="btn glass" id="cv-contact" href="#contact">Get in touch</a>
+    </div>
+  </div>
+</div>
+
+<script>
+{{SCRIPTS}}
+</script>
+</body>
+</html>

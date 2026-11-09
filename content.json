@@ -1,0 +1,190 @@
+{
+  "name": "Your Name",
+  "lines": [
+    "Your",
+    "Name"
+  ],
+  "intro": "<b>AI engineer.</b> I build systems that reason, see and act — from retrieval agents to on-device models.",
+  "status": "Curriculum Vitae",
+  "outro": "That’s the tour. Let’s build something that thinks.",
+  "email": "hello@yourname.dev",
+  "socials": [
+    [
+      "Email",
+      "",
+      "email"
+    ],
+    [
+      "GitHub",
+      "https://github.com/",
+      "github"
+    ],
+    [
+      "LinkedIn",
+      "https://linkedin.com/",
+      "linkedin"
+    ]
+  ],
+  "skills": [
+    "LLM agents",
+    "RAG",
+    "Fine-tuning",
+    "Evals",
+    "Computer vision",
+    "MLOps",
+    "PyTorch",
+    "TypeScript",
+    "Python"
+  ],
+  "about": "I care about AI that survives contact with real users. That means careful evaluation, fast feedback loops and interfaces that make a model’s reasoning legible. I work across research, backend and front end, and I ship.",
+  "projects": [
+    {
+      "n": "Atlas",
+      "y": "2026",
+      "t": "A research agent that cites its sources",
+      "d": "Reads thousands of pages, plans its own searches and answers with line-level citations.",
+      "w": "lavender",
+      "s": [
+        "Python",
+        "LangGraph",
+        "pgvector"
+      ],
+      "r": [
+        "94.2% citation precision across 12,000 multi-hop enterprise queries.",
+        "3.4× faster synthesis pipeline via speculative parallel sub-graph retrieval.",
+        "Adopted daily by 450+ analysts with zero hallucinated source links."
+      ],
+      "l": [
+        [
+          "Live demo",
+          "#contact"
+        ],
+        [
+          "Source",
+          "https://github.com/"
+        ]
+      ],
+      "c": [
+        "#cdb8ff",
+        "#bfe0ff",
+        "#fff1b8"
+      ]
+    },
+    {
+      "n": "Halcyon",
+      "y": "2025",
+      "t": "Voice and vision for field technicians",
+      "d": "A real-time multimodal assistant that sees the equipment and talks the technician through the fix.",
+      "w": "peach",
+      "s": [
+        "Whisper",
+        "Vision LLM",
+        "WebRTC"
+      ],
+      "r": [
+        "38% reduction in mean time-to-repair across 1,800 field dispatches.",
+        "Sub-320ms voice-to-voice + frame grounding latency over WebRTC.",
+        "Hands-free schematic overlay adopted across 14 regional service teams."
+      ],
+      "l": [
+        [
+          "Case study",
+          "#contact"
+        ]
+      ],
+      "c": [
+        "#ffd3c2",
+        "#cdb8ff",
+        "#bdf2dc"
+      ]
+    },
+    {
+      "n": "Loom",
+      "y": "2025",
+      "t": "A small model that runs on your phone",
+      "d": "A fine-tuned, quantised language model that summarises on-device with no network.",
+      "w": "mint",
+      "s": [
+        "PyTorch",
+        "LoRA",
+        "GGUF"
+      ],
+      "r": [
+        "1.8B LoRA-tuned model matching 7B baseline ROUGE-L within 1.2 points.",
+        "48 tokens/sec sustained on mobile NPU with 4-bit GGUF quantization.",
+        "Under 1.1 GB peak RAM footprint and <2% battery draw per 50 summaries."
+      ],
+      "l": [
+        [
+          "Write-up",
+          "#contact"
+        ],
+        [
+          "Source",
+          "https://github.com/"
+        ]
+      ],
+      "c": [
+        "#bdf2dc",
+        "#bfe0ff",
+        "#ffd3c2"
+      ]
+    },
+    {
+      "n": "Meridian",
+      "y": "2024",
+      "t": "Evals that catch regressions first",
+      "d": "A test harness that scores every prompt and model change before it reaches users.",
+      "w": "aqua",
+      "s": [
+        "TypeScript",
+        "Postgres",
+        "CI"
+      ],
+      "r": [
+        "Caught 97% of prompt & tool-call regressions in CI prior to staging.",
+        "14,000+ golden traces evaluated automatically in under 90 seconds.",
+        "Saved ~11 engineering hours per release cycle across 6 product squads."
+      ],
+      "l": [
+        [
+          "Source",
+          "https://github.com/"
+        ]
+      ],
+      "c": [
+        "#bfe0ff",
+        "#fff1b8",
+        "#cdb8ff"
+      ]
+    }
+  ],
+  "cv": {
+    "title": "Curriculum Vitae",
+    "lead": "Senior AI Engineer building autonomous retrieval agents, real-time multimodal systems, and quantized on-device models.",
+    "items": [
+      {
+        "title": "Lead AI Systems Engineer",
+        "meta": "2024 — Present · Autonomous Research & Agents",
+        "description": "Architected multi-hop LangGraph retrieval agents (Atlas) and CI evaluation harnesses (Meridian) serving 450+ enterprise analysts with 94.2% citation precision."
+      },
+      {
+        "title": "Machine Learning Engineer",
+        "meta": "2022 — 2024 · Multimodal & Edge Inference",
+        "description": "Built sub-320ms WebRTC voice/vision field guidance (Halcyon) and LoRA-quantized 1.8B on-device summarization models (Loom) running at 48 tok/s on mobile NPUs."
+      },
+      {
+        "title": "Core Stack & Education",
+        "meta": "M.S. Computer Science · PyTorch · LangGraph · TypeScript",
+        "description": "Deep experience across LoRA/QLoRA fine-tuning, GGUF quantization, pgvector hybrid retrieval, deterministic evals, and interactive WebGL interfaces."
+      }
+    ],
+    "tags": [
+      "PyTorch & CUDA",
+      "LangGraph & RAG",
+      "On-Device LLMs",
+      "Multimodal WebRTC",
+      "TypeScript & Python"
+    ]
+  }
+}
