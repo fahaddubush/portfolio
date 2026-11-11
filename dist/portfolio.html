@@ -8,6 +8,18 @@
 <meta name="theme-color" content="#fbf8ff">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+document.documentElement.classList.add('booting');
+// Keep the original page accessible if enhancement unexpectedly fails.
+setTimeout(function () {
+  const root = document.documentElement;
+  if (!root.classList.contains('ready')) {
+    root.classList.remove('booting');
+    root.classList.add('ready', 'rd');
+    if (document.body) document.body.classList.add('ready');
+  }
+}, 7000);
+</script>
 <style>
 
 /* Theme — Shared palette, typefaces and base document behavior. */
@@ -107,14 +119,25 @@ button {
 #ld {
   position:fixed;
   inset:0;
+  width:100%;
+  height:100dvh;
+  min-height:100svh;
   z-index:100;
   display:none;
   place-content:center;
-  overflow:hidden
+  overflow:hidden;
+  isolation:isolate;
+  background:radial-gradient(60% 50% at 20% 10%,var(--lilac),transparent),radial-gradient(50% 50% at 90% 30%,var(--peach),transparent),radial-gradient(60% 60% at 40% 100%,var(--mint),var(--paper))
 }
 
-.js #ld {
+.booting #ld,.js #ld {
   display:grid
+}
+.booting:not(.ready) #w,
+.booting:not(.ready) .nav,
+.booting:not(.ready) .snd,
+.booting:not(.ready) .up {
+  visibility:hidden
 }
 
 #ld>svg {
@@ -1102,6 +1125,48 @@ footer small {
   }
 }
 
+/* Mobile compositor-friendly animations: preserve reveals and 3D cards. */
+@media(hover:none),(pointer:coarse),(max-width:820px) {
+  .hero .row,.sec > h2,.ab,.contact-wrap,footer > div {
+    transform:none;
+    transition:none;
+    will-change:auto
+  }
+  .ready .hero h1 {
+    transform:translate3d(0,0,0)
+  }
+  .rv,.rv.in,html:not(.js) .rv {
+    clip-path:none
+  }
+  .rv {
+    opacity:0;
+    transition:opacity .65s var(--out)
+  }
+  .rv.in,html:not(.js) .rv {
+    opacity:1
+  }
+  .tt {
+    overflow:visible
+  }
+  .tt span {
+    transform:translateY(14px);
+    opacity:0;
+    transition:transform .75s var(--out),opacity .6s var(--out)
+  }
+  .tt.in span,html:not(.js) .tt span {
+    transform:none;
+    opacity:1
+  }
+  .card {
+    will-change:auto;
+    backface-visibility:hidden
+  }
+  .glass {
+    backdrop-filter:blur(10px) saturate(1.3);
+    -webkit-backdrop-filter:blur(10px) saturate(1.3)
+  }
+}
+
 /* Mobile responsive adjustments */
 @media(max-width:640px) {
   .nav {
@@ -1114,16 +1179,22 @@ footer small {
   }
   .hero {
     justify-content:flex-end;
-    padding:calc(12vh + env(safe-area-inset-top)) 6vw calc(10.5vh + env(safe-area-inset-bottom))
+    min-height:100svh;
+    padding:calc(76px + env(safe-area-inset-top)) 6vw calc(40px + env(safe-area-inset-bottom))
   }
   .hero h1 {
     margin:0 0 3.5vh;
-    font-size:clamp(4.5rem,22.5vw,8.4rem);
-    line-height:.88;
+    font-size:clamp(3.1rem,18vw,7.8rem);
+    line-height:.94;
     letter-spacing:-.05em
   }
+  .ln {
+    width:auto;
+    max-width:100%;
+    white-space:nowrap
+  }
   .ln+.ln {
-    margin-left:.42em
+    margin-left:.25em
   }
   .hero .row {
     margin-top:0;
@@ -2177,7 +2248,7 @@ const SITE = {
 };
 /* 2. Page helpers — Build the editable content and keep links safe. */
 const $ = function (selector) { return document.querySelector(selector); };
-const $$ = function (selector) { return Array.from(document.querySelectorAll(selector)); };
+const $ = function (selector) { return Array.from(document.querySelectorAll(selector)); };
 const H = document.documentElement;
 const W = $('#w');
 const P = SITE.projects;
@@ -2249,10 +2320,12 @@ let ok = false;
 let program = null;
 let buffer = null;
 let texture = null;
-let dpr = Math.min(devicePixelRatio || 1, 2);
+let dpr = Math.min(devicePixelRatio || 1, (fine && innerWidth > 820) ? 2 : 1.25);
 let textureWidth = 0;
 let textureHeight = 0;
 let textVersion = 0;
+let lastGPURender = -Infinity;
+let lastMobileFrame = -Infinity;
 let rows = [];
 let cards = [];
 let magnets = [];
@@ -2260,6 +2333,7 @@ let words = [];
 
 /* Phone Tilt state — Gyroscope deviceorientation + touch/scroll fallback on phones */
 let hasGyro = false;
+let lastTiltUpdate = -Infinity;
 let gyroPermitted = false;
 let baseBeta = null;
 let baseGamma = null;
@@ -2328,9 +2402,9 @@ function buildContent() {
   }).join('');
   $('#end span').textContent = SITE.outro || '';
   rows = [['#m1', -1], ['#m2', 1]].map(function (item) { return { el: $(item[0]), direction: item[1], x: 0, width: 1, dirty: true }; });
-  cards = $$('.card').map(function (el) { return { el: el, x: 0, y: 0, width: 1, height: 1, rx: 0, ry: 0, visible: false }; });
-  magnets = $$('.mag').map(function (el) { return { el: el, cx: 0, cy: 0, x: 0, y: 0, isBig: el.classList.contains('big') }; });
-  words = $$('#ab span');
+  cards = $('.card').map(function (el) { return { el: el, x: 0, y: 0, width: 1, height: 1, rx: 0, ry: 0, visible: false }; });
+  magnets = $('.mag').map(function (el) { return { el: el, cx: 0, cy: 0, x: 0, y: 0, isBig: el.classList.contains('big') }; });
+  words = $('#ab span');
 }
 buildContent();
 
@@ -2385,6 +2459,9 @@ function requestPhoneTiltPermission() {
 }
 
 function applyGyroAngles(g, b) {
+  const now = performance.now();
+  if ((!fine || viewportWidth <= 820) && now - lastTiltUpdate < 34) return;
+  lastTiltUpdate = now;
   hasGyro = true;
   if (baseBeta === null || baseGamma === null) {
     baseBeta = b;
@@ -2631,7 +2708,7 @@ function invalidateLayout() {
 function measure() {
   viewportWidth = innerWidth;
   viewportHeight = innerHeight;
-  const nextDpr = Math.min(devicePixelRatio || 1, 2);
+  const nextDpr = Math.min(devicePixelRatio || 1, (fine && viewportWidth > 820) ? 2 : 1.25);
   const width = Math.max(1, Math.round(viewportWidth * nextDpr));
   const height = Math.max(1, Math.round(viewportHeight * nextDpr));
   dpr = nextDpr;
@@ -2693,6 +2770,8 @@ if (document.fonts) {
 
 /* 5. Visibility — Preserve animation phase while skipping invisible DOM writes. */
 function pauseArtwork(root, pause) {
+  // Safari can flicker when offscreen CSS animation timelines are restarted.
+  if (pause && (!fine || viewportWidth <= 820)) return;
   if (!root || !root.getAnimations || typeof CSSAnimation === 'undefined') return;
   const now = document.timeline.currentTime;
   if (now === null) return;
@@ -2734,7 +2813,7 @@ const revealObserver = new IntersectionObserver(function (entries) {
     revealObserver.unobserve(entry.target);
   });
 }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
-$$('.rv,.tt,#so').forEach(function (el) { revealObserver.observe(el); });
+$('.rv,.tt,#so').forEach(function (el) { revealObserver.observe(el); });
 
 const visibilityObserver = new IntersectionObserver(function (entries) {
   entries.forEach(function (entry) {
@@ -3111,6 +3190,11 @@ function currentAmount() {
 
 function frame(now) {
   frameRequest = 0;
+  // Throttle JavaScript visual updates on mobile; native scrolling remains responsive.
+  if (!fine || viewportWidth <= 820) {
+    if (now - lastMobileFrame < 30) { wake(); return; }
+    lastMobileFrame = now;
+  }
   const dt = Math.max(0.001, Math.min((now - last) / 1000, .05));
   const damp = function (rate) { return 1 - Math.exp(-dt * rate); };
   const time = (now - timelineStart) / 1000;
@@ -3175,7 +3259,10 @@ function frame(now) {
     }
     mx += (gx - mx) * damp(4);
     my += (gy - my) * damp(4);
-    if (ok && textureWidth && !sceneCovered) renderGraphics(time, currentAmount(), entranceAmount());
+    if (ok && textureWidth && !sceneCovered && ((fine && viewportWidth > 820) || now - lastGPURender >= 34)) {
+      lastGPURender = now;
+      renderGraphics(time, currentAmount(), entranceAmount());
+    }
   }
 
   rows.forEach(function (row) {
@@ -3221,11 +3308,11 @@ function frame(now) {
         const phase = idx * 0.7;
         const tx = clamp(tiltX + Math.sin(time * 0.85 + phase) * 0.12, -1, 1);
         const ty = clamp(tiltY - cardScreenY * 0.3, -1, 1);
-        targetRx = -ty * 8.5;
-        targetRy = tx * 10.5;
+        targetRx = -ty * 3;
+        targetRy = tx * 3.5;
         spotX = clamp(50 + tx * 40, 5, 95);
         spotY = clamp(45 + ty * 40, 5, 95);
-        glow = 0.72;
+        glow = 0.58;
       }
 
       card.rx += (targetRx - card.rx) * damp(9);
@@ -3293,7 +3380,7 @@ function frame(now) {
 }
 
 /* 10. Entrance — Original rolling digits and liquid curtain. */
-const reels = $$('#ld .od>div');
+const reels = $('#ld .od>div');
 const curtains = [['#lp3', .16], ['#lp2', .08], ['#lp1', 0]].map(function (item) { return [$(item[0]), item[1]]; });
 const digits = function (values) { return values.map(function (digit) { return '<span>' + digit + '</span>'; }).join(''); };
 reels[0].innerHTML = digits([0, 1]);
@@ -3327,6 +3414,7 @@ function finishEntrance() {
   entranceFinished = true;
   if (!dialogOpen && !cvOpen) sceneCovered = false;
   $('#ld')?.remove();
+  H.classList.remove('booting');
   H.classList.add('ready', 'rd');
   document.body.classList.add('ready');
   go = true;
@@ -3353,6 +3441,7 @@ async function beginEntrance() {
         $('#ld .c').classList.add('go');
         $('#ld').style.pointerEvents = 'none';
         H.classList.add('ready', 'rd');
+        H.classList.remove('booting');
         document.body.classList.add('ready');
         sceneCovered = false;
         go = true;
