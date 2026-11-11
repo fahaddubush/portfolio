@@ -8,7 +8,7 @@ function invalidateLayout() {
 function measure() {
   viewportWidth = innerWidth;
   viewportHeight = innerHeight;
-  const nextDpr = Math.min(devicePixelRatio || 1, 2);
+  const nextDpr = Math.min(devicePixelRatio || 1, (fine && viewportWidth > 820) ? 2 : 1.25);
   const width = Math.max(1, Math.round(viewportWidth * nextDpr));
   const height = Math.max(1, Math.round(viewportHeight * nextDpr));
   dpr = nextDpr;
@@ -70,6 +70,8 @@ if (document.fonts) {
 
 /* 5. Visibility — Preserve animation phase while skipping invisible DOM writes. */
 function pauseArtwork(root, pause) {
+  // Safari can flicker when offscreen CSS animation timelines are restarted.
+  if (pause && (!fine || viewportWidth <= 820)) return;
   if (!root || !root.getAnimations || typeof CSSAnimation === 'undefined') return;
   const now = document.timeline.currentTime;
   if (now === null) return;
@@ -488,6 +490,11 @@ function currentAmount() {
 
 function frame(now) {
   frameRequest = 0;
+  // Throttle JavaScript visual updates on mobile; native scrolling remains responsive.
+  if (!fine || viewportWidth <= 820) {
+    if (now - lastMobileFrame < 30) { wake(); return; }
+    lastMobileFrame = now;
+  }
   const dt = Math.max(0.001, Math.min((now - last) / 1000, .05));
   const damp = function (rate) { return 1 - Math.exp(-dt * rate); };
   const time = (now - timelineStart) / 1000;
@@ -552,7 +559,10 @@ function frame(now) {
     }
     mx += (gx - mx) * damp(4);
     my += (gy - my) * damp(4);
-    if (ok && textureWidth && !sceneCovered) renderGraphics(time, currentAmount(), entranceAmount());
+    if (ok && textureWidth && !sceneCovered && ((fine && viewportWidth > 820) || now - lastGPURender >= 34)) {
+      lastGPURender = now;
+      renderGraphics(time, currentAmount(), entranceAmount());
+    }
   }
 
   rows.forEach(function (row) {
@@ -598,11 +608,11 @@ function frame(now) {
         const phase = idx * 0.7;
         const tx = clamp(tiltX + Math.sin(time * 0.85 + phase) * 0.12, -1, 1);
         const ty = clamp(tiltY - cardScreenY * 0.3, -1, 1);
-        targetRx = -ty * 8.5;
-        targetRy = tx * 10.5;
+        targetRx = -ty * 3;
+        targetRy = tx * 3.5;
         spotX = clamp(50 + tx * 40, 5, 95);
         spotY = clamp(45 + ty * 40, 5, 95);
-        glow = 0.72;
+        glow = 0.58;
       }
 
       card.rx += (targetRx - card.rx) * damp(9);
@@ -704,6 +714,7 @@ function finishEntrance() {
   entranceFinished = true;
   if (!dialogOpen && !cvOpen) sceneCovered = false;
   $('#ld')?.remove();
+  H.classList.remove('booting');
   H.classList.add('ready', 'rd');
   document.body.classList.add('ready');
   go = true;
@@ -730,6 +741,7 @@ async function beginEntrance() {
         $('#ld .c').classList.add('go');
         $('#ld').style.pointerEvents = 'none';
         H.classList.add('ready', 'rd');
+        H.classList.remove('booting');
         document.body.classList.add('ready');
         sceneCovered = false;
         go = true;
