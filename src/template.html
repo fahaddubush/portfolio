@@ -8,6 +8,18 @@
 <meta name="theme-color" content="#fbf8ff">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+document.documentElement.classList.add('booting');
+// Keep the original page accessible if enhancement unexpectedly fails.
+setTimeout(function () {
+  const root = document.documentElement;
+  if (!root.classList.contains('ready')) {
+    root.classList.remove('booting');
+    root.classList.add('ready', 'rd');
+    if (document.body) document.body.classList.add('ready');
+  }
+}, 7000);
+</script>
 <style>
 {{STYLES}}
 </style>
