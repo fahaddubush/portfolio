@@ -1191,3 +1191,46 @@ html:not(.js) .js-only,.js .fallback-cases {
   margin-bottom:4rem;
   scroll-margin-top:100px
 }
+
+/* Project evidence is shown inside the case study. */
+.project-visual {
+  margin:4vh 0;
+  padding:0;
+  overflow:hidden;
+  border-radius:1.6rem;
+  max-width:100%
+}
+.project-visual[hidden] { display:none }
+.project-image-frame { overflow:hidden; border-radius:1.35rem 1.35rem 0 0 }
+.project-image-groundtruth .project-visual-image { transform:scale(1.055) }
+.project-visual-image {
+  display:block;
+  width:100%;
+  height:auto
+}
+.project-visual figcaption {
+  padding:.7rem 1rem;
+  font-size:.88rem;
+  line-height:1.4;
+  opacity:.75
+}
+.project-evidence-panel {
+  margin:2rem 0;
+  padding:clamp(1.1rem,3vw,2rem);
+  border-radius:1.6rem
+}
+.project-evidence-panel h3 { font-size:clamp(1.35rem,3vw,1.8rem); margin:0 0 .7rem }
+.project-evidence-panel p { line-height:1.55; margin:0 0 1rem; max-width:65ch }
+.project-flow { display:flex; flex-wrap:wrap; align-items:center; gap:.6rem; padding:0; margin:1rem 0 0; list-style:none; counter-reset:project-flow }
+.project-flow li { counter-increment:project-flow; border:1px solid rgba(255,255,255,.8); border-radius:1rem; padding:.7rem .9rem; background:rgba(255,255,255,.46); line-height:1.35 }
+.project-flow li::before { content:counter(project-flow) '. '; font-weight:700 }
+.project-table-wrap { overflow-x:auto; max-width:100%; border-radius:1rem }
+.project-table-wrap { scrollbar-width:thin; scrollbar-color:rgba(131,105,181,.7) rgba(255,255,255,.32) }
+.project-table-wrap::-webkit-scrollbar { height:8px }
+.project-table-wrap::-webkit-scrollbar-track { background:rgba(255,255,255,.32); border-radius:999px }
+.project-table-wrap::-webkit-scrollbar-thumb { background:rgba(131,105,181,.7); border-radius:999px; border:2px solid transparent; background-clip:padding-box }
+.project-table-wrap:focus-visible { outline:2px solid currentColor; outline-offset:3px }
+.project-table-wrap table { width:100%; border-collapse:collapse; text-align:left; font-size:.9rem; line-height:1.4 }
+.project-table-wrap th,.project-table-wrap td { padding:.75rem .9rem; border-bottom:1px solid rgba(80,65,120,.16); vertical-align:top }
+.project-table-wrap thead { background:rgba(255,255,255,.4) }
+.project-table-wrap th { font-weight:700 }

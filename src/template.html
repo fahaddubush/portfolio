@@ -32,7 +32,7 @@
       <h1 id="h1">{{HERO}}</h1>
       <div class="row">
         <p class="intro" id="intro">{{INTRO}}</p>
-        <a class="cv-btn glass mag" id="cv-btn" href="#cv" data-cur="CV" aria-haspopup="dialog" aria-label="Open Curriculum Vitae">
+        <a class="cv-btn glass mag" id="cv-btn" href="FahadDubush_CV.pdf" target="_blank" rel="noopener noreferrer" data-cur="CV" aria-label="Open Curriculum Vitae PDF in a new tab">
           <span class="cv-logo" aria-hidden="true">
             <svg viewBox="0 0 24 24">
               <defs>
@@ -64,7 +64,7 @@
       {{CARDS}}
     </section>
     <!-- About — Word-scrub enhancement over a complete readable paragraph. -->
-    <section class="sec" id="about" aria-labelledby="about-title"><h2 class="sr-only" id="about-title">About</h2><p class="ab" id="ab">{{ABOUT}}</p></section>
+    <section class="sec" id="about" aria-labelledby="about-title"><h2 class="tt" id="about-title"><span>About me</span></h2><p class="ab" id="ab">{{ABOUT}}</p></section>
     <!-- Contact — Email works without JavaScript; copy button shows icon and expands on hover. -->
     <section class="sec" id="contact" aria-labelledby="contact-title">
       <h2 class="tt" id="contact-title"><span>Let’s talk.</span></h2>
@@ -103,7 +103,7 @@
 <button hidden class="up glass" id="up" type="button" aria-label="Back to top"><svg class="rg" viewBox="0 0 46 46" aria-hidden="true"><circle id="rg" cx="23" cy="23" r="21"/></svg><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 
 <!-- Case overlay — Original circle reveal with complete focus containment. -->
-<div id="cs" inert aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="cst"><button class="x glass" type="button" aria-label="Close case study">Close</button><div class="in"><div class="viz"><i></i><i></i><i></i><b></b><b></b><b></b></div><h2 id="cst"></h2><p class="lead"></p><ul class="res"></ul><ul class="tags"></ul><div id="lk"></div></div></div>
+<div id="cs" inert aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="cst"><button class="x glass" type="button" aria-label="Close case study">Close</button><div class="in"><div class="viz"><i></i><i></i><i></i><b></b><b></b><b></b></div><h2 id="cst"></h2><p class="lead"></p><div id="project-evidence"></div><ul class="res"></ul><ul class="tags"></ul><div id="lk"></div></div></div>
 
 <!-- CV Modal — Opens with circular reveal when pressing the CV button in the hero. -->
 <div id="cv-modal" inert aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="cvt" style="--a:#cdb8ff;--b:#ffd3c2">

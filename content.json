@@ -1,13 +1,13 @@
 {
-  "name": "Your Name",
+  "name": "Fahad Dubush",
   "lines": [
-    "Your",
-    "Name"
+    "Fahad",
+    "Dubush"
   ],
-  "intro": "<b>AI engineer.</b> I build systems that reason, see and act — from retrieval agents to on-device models.",
+  "intro": "<b>AI Engineer.</b> I explore how AI and automation can turn unconventional ideas into practical solutions that save time, reduce costs, and make technology work smarter.",
   "status": "Curriculum Vitae",
   "outro": "That’s the tour. Let’s build something that thinks.",
-  "email": "hello@yourname.dev",
+  "email": "fahaddubush@gmail.com",
   "socials": [
     [
       "Email",
@@ -16,12 +16,12 @@
     ],
     [
       "GitHub",
-      "https://github.com/",
+      "https://github.com/fahaddubush",
       "github"
     ],
     [
       "LinkedIn",
-      "https://linkedin.com/",
+      "https://www.linkedin.com/in/fahad-dubush-9390b8254/",
       "linkedin"
     ]
   ],
@@ -36,127 +36,286 @@
     "TypeScript",
     "Python"
   ],
-  "about": "I care about AI that survives contact with real users. That means careful evaluation, fast feedback loops and interfaces that make a model’s reasoning legible. I work across research, backend and front end, and I ship.",
+  "about": "I’m drawn to ideas that sit outside the usual playbook: things that haven’t been tried yet, or opportunities others might overlook. I enjoy exploring how AI and automation can solve problems in ways that save time and money. Before starting a project, I like to research the options and find the best balance between capability and cost. My curiosity extends beyond technology to games, films, shows, and books, anywhere a new idea or perspective can spark something worth building.",
   "projects": [
     {
-      "n": "Atlas",
+      "n": "Pilgrim Companion",
       "y": "2026",
-      "t": "A research agent that cites its sources",
-      "d": "Reads thousands of pages, plans its own searches and answers with line-level citations.",
+      "t": "AI guidance for Hajj and Umrah",
+      "d": "A local-first question-answering application that retrieves multilingual sources and grounds responses in cited context.",
       "w": "lavender",
       "s": [
         "Python",
-        "LangGraph",
-        "pgvector"
+        "FastAPI",
+        "RAG"
       ],
       "r": [
-        "94.2% citation precision across 12,000 multi-hop enterprise queries.",
-        "3.4× faster synthesis pipeline via speculative parallel sub-graph retrieval.",
-        "Adopted daily by 450+ analysts with zero hallucinated source links."
+        "Combines semantic and keyword retrieval for English and Arabic questions.",
+        "Supports local Ollama models and OpenAI-compatible APIs.",
+        "Includes source citations, streaming responses, and out-of-domain handling.",
+        "Uses conversation-safe caching for standalone questions to avoid reusing cached results for follow-up questions."
       ],
       "l": [
         [
-          "Live demo",
-          "#contact"
-        ],
-        [
-          "Source",
-          "https://github.com/"
+          "View source",
+          "https://github.com/fahaddubush/Pilgrim-Companion"
         ]
       ],
       "c": [
         "#cdb8ff",
         "#bfe0ff",
         "#fff1b8"
-      ]
+      ],
+      "visual": {
+        "file": "assets/projects/pilgrim.png",
+        "alt": "Pilgrim Companion interface showing the question prompt and grounding panel.",
+        "caption": "Pilgrim Companion interface"
+      },
+      "diagram": {
+        "title": "Retrieval pipeline",
+        "description": "A simplified view of the pipeline described in the project README.",
+        "steps": [
+          "English or Arabic question",
+          "Domain routing",
+          "Dense and BM25 retrieval",
+          "Rank fusion and relevance checks",
+          "Optional reranking",
+          "Grounded prompt and local or API model",
+          "Streamed response with sources"
+        ]
+      },
+      "table": {
+        "title": "Retrieval evaluation",
+        "note": "Results reported in the repository for a 12-question English and Arabic regression set on a CPU development machine. These results are not a measure of religious correctness or production accuracy.",
+        "headers": [
+          "Metric",
+          "Result"
+        ],
+        "rows": [
+          [
+            "Retrieval Recall@4",
+            "100%"
+          ],
+          [
+            "Mean Reciprocal Rank",
+            "0.926"
+          ],
+          [
+            "Out-of-domain rejection",
+            "100%"
+          ],
+          [
+            "Median retrieval latency",
+            "51.8 ms"
+          ],
+          [
+            "Knowledge-base chunks",
+            "123 unique chunks"
+          ]
+        ]
+      }
     },
     {
-      "n": "Halcyon",
-      "y": "2025",
-      "t": "Voice and vision for field technicians",
-      "d": "A real-time multimodal assistant that sees the equipment and talks the technician through the fix.",
+      "n": "Groundtruth",
+      "y": "2026",
+      "t": "A retrieval evaluation toolkit for legal research",
+      "d": "An evaluation harness for comparing retrieval approaches and detecting regressions in a legal research dataset.",
       "w": "peach",
       "s": [
-        "Whisper",
-        "Vision LLM",
-        "WebRTC"
+        "Python",
+        "RAG",
+        "CI"
       ],
       "r": [
-        "38% reduction in mean time-to-repair across 1,800 field dispatches.",
-        "Sub-320ms voice-to-voice + frame grounding latency over WebRTC.",
-        "Hands-free schematic overlay adopted across 14 regional service teams."
+        "Compares lexical, dense, hybrid, and reranked retrieval approaches.",
+        "Reports retrieval metrics and results by practice area.",
+        "Includes a CI gate designed to flag retrieval regressions."
       ],
       "l": [
         [
-          "Case study",
-          "#contact"
+          "View source",
+          "https://github.com/fahaddubush/groundtruth"
         ]
       ],
       "c": [
         "#ffd3c2",
         "#cdb8ff",
         "#bdf2dc"
-      ]
+      ],
+      "visual": {
+        "file": "assets/projects/groundtruth.png",
+        "alt": "Diagram showing lexical and dense retrieval, rank fusion, reranking, and a CI evaluation gate.",
+        "caption": "Groundtruth retrieval architecture"
+      },
+      "table": {
+        "title": "Retrieval benchmark",
+        "note": "Results reported in the project README for its 100-query evaluation set. Benchmark results are not evidence of legal safety or production readiness.",
+        "headers": [
+          "Configuration",
+          "Recall@5",
+          "Recall@10",
+          "MRR@10",
+          "nDCG@10",
+          "Mean latency",
+          "p95 latency",
+          "Hard failures"
+        ],
+        "rows": [
+          [
+            "BM25",
+            "0.788",
+            "0.848",
+            "0.964",
+            "0.913",
+            "0.3 ms",
+            "0.4 ms",
+            "1 / 100"
+          ],
+          [
+            "Dense",
+            "0.828",
+            "0.907",
+            "0.973",
+            "0.926",
+            "5.3 ms",
+            "6.4 ms",
+            "0 / 100"
+          ],
+          [
+            "Hybrid",
+            "0.838",
+            "0.882",
+            "0.988",
+            "0.939",
+            "5.8 ms",
+            "6.9 ms",
+            "0 / 100"
+          ],
+          [
+            "Hybrid + reranker",
+            "0.862",
+            "0.898",
+            "0.981",
+            "0.939",
+            "22.2 ms",
+            "27.7 ms",
+            "0 / 100"
+          ],
+          [
+            "Hybrid, fine chunks",
+            "0.832",
+            "0.888",
+            "0.975",
+            "0.924",
+            "5.8 ms",
+            "7.0 ms",
+            "0 / 100"
+          ]
+        ]
+      }
     },
     {
-      "n": "Loom",
-      "y": "2025",
-      "t": "A small model that runs on your phone",
-      "d": "A fine-tuned, quantised language model that summarises on-device with no network.",
+      "n": "FORGE Athletic Apparel",
+      "y": "2026",
+      "t": "A deployed website for an athletic apparel client",
+      "d": "A client project for FORGE Athletic Apparel, built as a deployed coming-soon website for the brand.",
       "w": "mint",
       "s": [
-        "PyTorch",
-        "LoRA",
-        "GGUF"
+        "HTML",
+        "Web Design"
       ],
       "r": [
-        "1.8B LoRA-tuned model matching 7B baseline ROUGE-L within 1.2 points.",
-        "48 tokens/sec sustained on mobile NPU with 4-bit GGUF quantization.",
-        "Under 1.1 GB peak RAM footprint and <2% battery draw per 50 summaries."
+        "Created for an athletic apparel client.",
+        "Deployed at forgeksa.shop.",
+        "Presents the brand through a dedicated coming-soon web page."
       ],
       "l": [
         [
-          "Write-up",
-          "#contact"
+          "Visit website",
+          "https://forgeksa.shop/"
         ],
         [
-          "Source",
-          "https://github.com/"
+          "View source",
+          "https://github.com/fahaddubush/forgeksa.shop"
         ]
       ],
       "c": [
         "#bdf2dc",
         "#bfe0ff",
         "#ffd3c2"
-      ]
+      ],
+      "visual": {
+        "file": "assets/projects/forge.jpg",
+        "alt": "FORGE Athletic Apparel logo on a dark background.",
+        "caption": "FORGE brand preview"
+      }
     },
     {
-      "n": "Meridian",
-      "y": "2024",
-      "t": "Evals that catch regressions first",
-      "d": "A test harness that scores every prompt and model change before it reaches users.",
+      "n": "HomeLab TUI",
+      "y": "2026",
+      "t": "A terminal dashboard for a self-hosted server",
+      "d": "An SSH-friendly Linux terminal interface for monitoring host telemetry, Docker containers, and maintenance tasks.",
       "w": "aqua",
       "s": [
-        "TypeScript",
-        "Postgres",
-        "CI"
+        "Go",
+        "Docker",
+        "Linux"
       ],
       "r": [
-        "Caught 97% of prompt & tool-call regressions in CI prior to staging.",
-        "14,000+ golden traces evaluated automatically in under 90 seconds.",
-        "Saved ~11 engineering hours per release cycle across 6 product squads."
+        "Brings host metrics, container status, logs, and maintenance tools into one interface.",
+        "Includes a demo mode with fictional data and disabled actions.",
+        "Supports configurable settings, keyboard navigation, and optional animation."
       ],
       "l": [
         [
-          "Source",
-          "https://github.com/"
+          "View source",
+          "https://github.com/fahaddubush/homelab-tui"
         ]
       ],
       "c": [
         "#bfe0ff",
         "#fff1b8",
         "#cdb8ff"
-      ]
+      ],
+      "visual": {
+        "file": "assets/projects/homelab.png",
+        "alt": "HomeLab terminal dashboard in demo mode with fictional telemetry.",
+        "caption": "HomeLab demo with fictional data"
+      },
+      "table": {
+        "title": "Dashboard overview",
+        "note": "Features described in the repository README. Availability depends on host configuration and permissions.",
+        "headers": [
+          "Area",
+          "What it shows or does"
+        ],
+        "rows": [
+          [
+            "Overview",
+            "CPU, memory, network, disk usage, and container status"
+          ],
+          [
+            "Containers",
+            "Docker container states and selected container actions"
+          ],
+          [
+            "Updates",
+            "Compose checks and eligible update options"
+          ],
+          [
+            "Storage, network, security",
+            "Host diagnostics and checks"
+          ],
+          [
+            "Backups, logs, maintenance",
+            "Explicitly invoked tasks, logging, and reporting"
+          ],
+          [
+            "Settings",
+            "Animation, polling, update pacing, and help"
+          ]
+        ]
+      }
     }
   ],
   "cv": {
@@ -165,17 +324,17 @@
     "items": [
       {
         "title": "Lead AI Systems Engineer",
-        "meta": "2024 — Present · Autonomous Research & Agents",
+        "meta": "2024 to Present · Autonomous Research & Agents",
         "description": "Architected multi-hop LangGraph retrieval agents (Atlas) and CI evaluation harnesses (Meridian) serving 450+ enterprise analysts with 94.2% citation precision."
       },
       {
         "title": "Machine Learning Engineer",
-        "meta": "2022 — 2024 · Multimodal & Edge Inference",
+        "meta": "2022 to 2024 · Multimodal & Edge Inference",
         "description": "Built sub-320ms WebRTC voice/vision field guidance (Halcyon) and LoRA-quantized 1.8B on-device summarization models (Loom) running at 48 tok/s on mobile NPUs."
       },
       {
         "title": "Core Stack & Education",
-        "meta": "M.S. Computer Science · PyTorch · LangGraph · TypeScript",
+        "meta": "Effat University · Computer Science, AI Track · PyTorch · LangGraph · TypeScript",
         "description": "Deep experience across LoRA/QLoRA fine-tuning, GGUF quantization, pgvector hybrid retrieval, deterministic evals, and interactive WebGL interfaces."
       }
     ],

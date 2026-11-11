@@ -162,6 +162,9 @@ function openCS(index, x, y, trigger) {
   cs.querySelector('.viz').setAttribute('style', '--a:' + project.c[0] + ';--b:' + project.c[1] + ';--c:' + project.c[2]);
   $('#cst').textContent = project.n;
   cs.querySelector('.lead').textContent = project.t + '. ' + project.d;
+  const fallbackCase = document.getElementById('project-' + slug(project.n));
+  const evidence = fallbackCase && fallbackCase.querySelector('.project-evidence');
+  $('#project-evidence').innerHTML = evidence ? evidence.innerHTML : '';
   cs.querySelector('.res').innerHTML = project.r.map(function (result) { return '<li>' + escapeHTML(result) + '</li>'; }).join('');
   cs.querySelector('.tags').innerHTML = project.s.map(function (skill) { return '<li>' + escapeHTML(skill) + '</li>'; }).join('');
   $('#lk').innerHTML = project.l.map(function (link) {
@@ -301,7 +304,7 @@ document.addEventListener('click', function (event) {
   }
 
   const cvLink = event.target.closest('#cv-btn');
-  if (cvLink && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+  if (cvLink && cvLink.getAttribute('href') === '#cv' && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
     event.preventDefault();
     const rect = cvLink.getBoundingClientRect();
     const clickX = event.clientX || (rect.left + rect.width / 2);
@@ -746,7 +749,33 @@ async function beginEntrance() {
   setTimeout(finishEntrance, 5000);
 }
 
+/* A reload restarts the entrance at the top. New deep links and history restores keep their routes. */
+function prepareReloadStart() {
+  const navigation = typeof performance.getEntriesByType === 'function' ? performance.getEntriesByType('navigation')[0] : null;
+  if (!navigation || navigation.type !== 'reload') return;
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (location.hash && location.hash !== '#top') safeReplaceState(history.state, '#top');
+  function resetReloadPosition() {
+    scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    cur = tgt = 0;
+    vel = 0;
+    lastScroll = -1;
+    W.style.transform = '';
+    invalidateLayout();
+  }
+  resetReloadPosition();
+  addEventListener('pageshow', function (event) {
+    if (event.persisted) return;
+    resetReloadPosition();
+    requestAnimationFrame(function () {
+      resetReloadPosition();
+      if ('scrollRestoration' in history) history.scrollRestoration = 'auto';
+    });
+  }, { once: true });
+}
+
 /* 11. Start — Enhance only after setup; plain HTML remains a complete fallback. */
+prepareReloadStart();
 H.classList.add('js');
 H.classList.toggle('sm', sm);
 H.classList.toggle('jc', fine);

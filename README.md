@@ -17,7 +17,9 @@ The source of most of your content is **[`content.json`](content.json)**. You ed
 node build.cjs
 ```
 
-Open **[`dist/portfolio.html`](dist/portfolio.html)** in a browser by double-clicking it. That file contains the page's HTML, CSS, and JavaScript; Google Fonts still need an internet connection. You can send or host this one HTML file when you're ready. Do not edit it directly: the next build overwrites it.
+Open **[`dist/portfolio.html`](dist/portfolio.html)** in a browser by double-clicking it. The page's HTML, CSS, and JavaScript are in that file; Google Fonts still need an internet connection. Keep `FahadDubush_CV.pdf` beside it when sharing or hosting the site, so the CV button works. Do not edit the built files directly: the next build overwrites them.
+
+To update the PDF, replace `assets/cv/FahadDubush_CV.pdf` and rebuild. The earlier portfolio with its interactive CV page is saved separately on the original computer.
 
 **You need:** [Node.js](https://nodejs.org/) installed on your computer. Open PowerShell in the project folder, run `node --version` to check, and then run the build command above. No `npm install` is needed.
 
@@ -171,3 +173,11 @@ git push
 - **A new project link conflicts with another:** Give the projects distinct names, rebuild, and test their links.
 - **Fonts look different offline:** The page loads its fonts from Google Fonts when available.
 - **Something looks or moves differently after a code edit:** Revert the relevant change or compare it with an earlier Git commit. Test on the browsers and devices you intend to support.
+
+### Project visuals
+
+Each project may have a `visual` object in `content.json` with `file`, `alt`, and `caption`; it appears inside the case study. Place PNG or JPEG files under `assets/projects/`, set `file` to its path, and rebuild. The build embeds the images in the standalone HTML, so they remain available when the file is opened offline. Omit `visual` if there is no suitable image. The outside card keeps its animated artwork. Use descriptive alt text and note when a screenshot contains demo data.
+
+The current images come from the projects' GitHub repositories: Pilgrim Companion's interface preview, Groundtruth's retrieval architecture, FORGE's social preview (the repository has no README), and HomeLab TUI's fictional-data demo screenshot.
+
+Optional `diagram` and `table` objects in `content.json` add an accessible pipeline and a scrollable table inside the case study. Keep benchmark context and limitations alongside any results.
