@@ -72,10 +72,12 @@ let ok = false;
 let program = null;
 let buffer = null;
 let texture = null;
-let dpr = Math.min(devicePixelRatio || 1, 2);
+let dpr = Math.min(devicePixelRatio || 1, (fine && innerWidth > 820) ? 2 : 1.25);
 let textureWidth = 0;
 let textureHeight = 0;
 let textVersion = 0;
+let lastGPURender = -Infinity;
+let lastMobileFrame = -Infinity;
 let rows = [];
 let cards = [];
 let magnets = [];
@@ -83,6 +85,7 @@ let words = [];
 
 /* Phone Tilt state — Gyroscope deviceorientation + touch/scroll fallback on phones */
 let hasGyro = false;
+let lastTiltUpdate = -Infinity;
 let gyroPermitted = false;
 let baseBeta = null;
 let baseGamma = null;
@@ -208,6 +211,9 @@ function requestPhoneTiltPermission() {
 }
 
 function applyGyroAngles(g, b) {
+  const now = performance.now();
+  if ((!fine || viewportWidth <= 820) && now - lastTiltUpdate < 34) return;
+  lastTiltUpdate = now;
   hasGyro = true;
   if (baseBeta === null || baseGamma === null) {
     baseBeta = b;
