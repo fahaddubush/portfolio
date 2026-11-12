@@ -828,7 +828,7 @@ if (showMobileWelcome) {
       }
       H.classList.remove('welcome-pending');
       wake();
-    }, rm ? 0 : 650);
+    }, 650);
   }
   enable.addEventListener('click', function () {
     if (chosen) return;

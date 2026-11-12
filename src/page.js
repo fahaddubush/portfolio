@@ -9,7 +9,6 @@ const escapeHTML = function (value) { return String(value).replace(/[&<>"']/g, f
 const slug = function (value) { return String(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); };
 const projectHash = function (index) { return '#project-' + slug(P[index].n); };
 const pointerPreference = matchMedia('(pointer: fine)');
-let rm = false;
 let fine = pointerPreference.matches;
 let sm = fine;
 let started = false;
