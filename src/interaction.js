@@ -388,7 +388,7 @@ function applyPreferences() {
     H.classList.toggle('sm', sm);
     W.style.transform = '';
     document.body.style.height = '';
-    cur = tgt = position;
+    cur = tgt = marqueeScroll = position;
     if (sm) document.body.style.height = W.scrollHeight + 'px';
     scrollTo({ top: position, behavior: 'auto' });
   }
@@ -486,6 +486,13 @@ function currentAmount() {
   return Math.max(hero, footer) * entranceAmount();
 }
 
+const lastTiltStyle = Object.create(null);
+function updateTiltStyle(name, value) {
+  if (lastTiltStyle[name] === value) return;
+  lastTiltStyle[name] = value;
+  H.style.setProperty(name, value);
+}
+
 function frame(now) {
   frameRequest = 0;
   const dt = Math.max(0.001, Math.min((now - last) / 1000, .05));
@@ -525,15 +532,15 @@ function frame(now) {
 
   /* Whole-webpage phone tilt on phones (per-section local 3D perspective + parallax) */
   if (isPhoneMode && !sceneCovered) {
-    H.style.setProperty('--wt-rx', clamp(-tiltY * 3.8, -4.5, 4.5).toFixed(2) + 'deg');
-    H.style.setProperty('--wt-ry', clamp(tiltX * 4.6, -5.5, 5.5).toFixed(2) + 'deg');
-    H.style.setProperty('--wt-tx', clamp(tiltX * 7.5, -9, 9).toFixed(1) + 'px');
-    H.style.setProperty('--wt-ty', clamp(tiltY * 5.5, -7, 7).toFixed(1) + 'px');
+    updateTiltStyle('--wt-rx', clamp(-tiltY * 3.8, -4.5, 4.5).toFixed(2) + 'deg');
+    updateTiltStyle('--wt-ry', clamp(tiltX * 4.6, -5.5, 5.5).toFixed(2) + 'deg');
+    updateTiltStyle('--wt-tx', clamp(tiltX * 7.5, -9, 9).toFixed(1) + 'px');
+    updateTiltStyle('--wt-ty', clamp(tiltY * 5.5, -7, 7).toFixed(1) + 'px');
   } else if (!isPhoneMode) {
-    H.style.setProperty('--wt-rx', '0deg');
-    H.style.setProperty('--wt-ry', '0deg');
-    H.style.setProperty('--wt-tx', '0px');
-    H.style.setProperty('--wt-ty', '0px');
+    updateTiltStyle('--wt-rx', '0deg');
+    updateTiltStyle('--wt-ry', '0deg');
+    updateTiltStyle('--wt-tx', '0px');
+    updateTiltStyle('--wt-ty', '0px');
   }
 
   /* WebGL 3D liquid glass spheres — driven by pointer on PC and phone tilt on phones */
@@ -555,12 +562,15 @@ function frame(now) {
     if (ok && textureWidth && !sceneCovered) renderGraphics(time, currentAmount(), entranceAmount());
   }
 
+  // Match desktop's eased scroll response while leaving native touch scrolling intact.
+  marqueeScroll = sm ? cur : marqueeScroll + (tgt - marqueeScroll) * damp(6.5);
+  const marqueeVelocity = sm ? vel : tgt - marqueeScroll;
   rows.forEach(function (row) {
-    row.x += row.direction * (36 + Math.abs(vel) * 7) * dt;
+    row.x += row.direction * (36 + Math.abs(marqueeVelocity) * 7) * dt;
     if (row.x <= -row.width) row.x += row.width;
     if (row.x > 0) row.x -= row.width;
     if (!sceneCovered) {
-      row.el.style.transform = 'translate3d(' + row.x.toFixed(2) + 'px,0,0) skewX(' + clamp(-vel * .12, -8, 8).toFixed(2) + 'deg)';
+      row.el.style.transform = 'translate3d(' + row.x.toFixed(2) + 'px,0,0) skewX(' + clamp(-marqueeVelocity * .12, -8, 8).toFixed(2) + 'deg)';
       row.dirty = false;
     }
   });
@@ -757,7 +767,7 @@ function prepareReloadStart() {
   if (location.hash && location.hash !== '#top') safeReplaceState(history.state, '#top');
   function resetReloadPosition() {
     scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    cur = tgt = 0;
+    cur = tgt = marqueeScroll = 0;
     vel = 0;
     lastScroll = -1;
     W.style.transform = '';

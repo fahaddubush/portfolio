@@ -83,70 +83,27 @@ function initGraphics() {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]].forEach(function (pair) { gl.texParameteri(gl.TEXTURE_2D, pair[0], pair[1]); });
     gl.uniform1i(U.tx, 0);
-    textureWidth = textureHeight = 0;
+    textureWidth = 0;
     ok = true;
     layoutDirty = textDirty = true;
     invalidateLayout();
   } catch (error) { disableGraphics(error); }
 }
 
-// drawTex: Rasterize settled heading geometry at full Retina DPR with exact tracking and pixel alignment.
+// Initialize a transparent sampler once. The real heading now sits above the canvas.
 function drawTex() {
-  if (!ok || !textContext) { textDirty = false; return; }
-  if (tc.width !== cv.width) tc.width = cv.width;
-  if (tc.height !== cv.height) tc.height = cv.height;
-  textContext.setTransform(1, 0, 0, 1, 0, 0);
-  textContext.clearRect(0, 0, tc.width, tc.height);
-  textContext.scale(dpr, dpr);
-  textContext.fillStyle = '#2b2540';
-  textContext.textBaseline = 'middle';
-  if ('fontKerning' in textContext) textContext.fontKerning = 'normal';
-  if ('textRendering' in textContext) textContext.textRendering = 'geometricPrecision';
-  const scrollOffset = sm ? cur : scrollY;
-  $$('.ln').forEach(function (line) {
-    const rect = line.getBoundingClientRect();
-    const style = getComputedStyle(line);
-    const fontSizePx = parseFloat(style.fontSize) || 80;
-    const lsPx = parseFloat(style.letterSpacing) || (-0.05 * fontSizePx);
-    if ('letterSpacing' in textContext) textContext.letterSpacing = '0px';
-    textContext.font = style.fontWeight + ' ' + style.fontSize + ' ' + style.fontFamily;
-    const widthZero = textContext.measureText(line.textContent).width;
-    if ('letterSpacing' in textContext) textContext.letterSpacing = lsPx.toFixed(2) + 'px';
-    const widthSpaced = textContext.measureText(line.textContent).width;
-    const xSnap = Math.round(rect.left * dpr) / dpr;
-    const ySnap = Math.round((rect.top + scrollOffset + rect.height * .52) * dpr) / dpr;
-    if (Math.abs(widthSpaced - widthZero) > 0.5 || !lsPx) {
-      textContext.fillText(line.textContent, xSnap, ySnap);
-    } else {
-      // Fallback for mobile browsers where Canvas 2D ignores negative letterSpacing
-      let cursorX = xSnap;
-      const chars = Array.from(line.textContent);
-      for (let i = 0; i < chars.length; i++) {
-        const ch = chars[i];
-        textContext.fillText(ch, cursorX, ySnap);
-        const adv = i < chars.length - 1
-          ? textContext.measureText(ch + chars[i + 1]).width - textContext.measureText(chars[i + 1]).width
-          : textContext.measureText(ch).width;
-        cursorX += adv + lsPx;
-      }
-    }
-  });
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  if (textureWidth !== tc.width || textureHeight !== tc.height) {
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tc);
-    textureWidth = tc.width;
-    textureHeight = tc.height;
-  } else {
-    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, tc);
+  if (!ok) { textDirty = false; return; }
+  if (!textureWidth) {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+    textureWidth = 1;
   }
   textDirty = false;
-  textVersion++;
   H.classList.add('gl');
 }
 
 // renderGraphics: Calculate shared sphere motion once, instead of per shader sample.
 function renderGraphics(time, amount, entrance) {
-  const isMobileHero = !fine || viewportWidth <= 820;
   spheres[0] = mx * 1.875;
   spheres[1] = my * 1.875;
   spheres[2] = 0;
@@ -163,7 +120,7 @@ function renderGraphics(time, amount, entrance) {
   gl.uniform1f(U.t, time);
   gl.uniform1f(U.s, Math.round(cur * dpr));
   gl.uniform1f(U.f, amount);
-  gl.uniform1f(U.g, isMobileHero ? 0 : entrance);
+  gl.uniform1f(U.g, 0);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
 

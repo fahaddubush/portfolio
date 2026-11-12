@@ -283,8 +283,12 @@ button {
 }
 
 @media(pointer:fine) and (min-width:821px) {
-  .gl .hero h1 {
-    color:transparent
+  html.js .hero h1 {
+    opacity:0;
+    transition:opacity 1.5s var(--out)
+  }
+  html.js.ready .hero h1 {
+    opacity:1
   }
 }
 
@@ -2226,6 +2230,7 @@ let lastScroll = -1;
 let lastProgress = '';
 let cur = scrollY;
 let tgt = cur;
+let marqueeScroll = cur;
 let vel = 0;
 let itr = 0;
 let go = false;
@@ -2262,8 +2267,6 @@ const sndLbl = $('#snd-lbl');
 const cd = $('.cd');
 const cr = $('.cr');
 const cv = $('#gl');
-const tc = document.createElement('canvas');
-const textContext = tc.getContext('2d');
 const U = {};
 const spheres = new Float32Array(16);
 let gl = null;
@@ -2273,8 +2276,6 @@ let buffer = null;
 let texture = null;
 let dpr = Math.min(devicePixelRatio || 1, 2);
 let textureWidth = 0;
-let textureHeight = 0;
-let textVersion = 0;
 let rows = [];
 let cards = [];
 let magnets = [];
@@ -2551,70 +2552,27 @@ function initGraphics() {
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]].forEach(function (pair) { gl.texParameteri(gl.TEXTURE_2D, pair[0], pair[1]); });
     gl.uniform1i(U.tx, 0);
-    textureWidth = textureHeight = 0;
+    textureWidth = 0;
     ok = true;
     layoutDirty = textDirty = true;
     invalidateLayout();
   } catch (error) { disableGraphics(error); }
 }
 
-// drawTex: Rasterize settled heading geometry at full Retina DPR with exact tracking and pixel alignment.
+// Initialize a transparent sampler once. The real heading now sits above the canvas.
 function drawTex() {
-  if (!ok || !textContext) { textDirty = false; return; }
-  if (tc.width !== cv.width) tc.width = cv.width;
-  if (tc.height !== cv.height) tc.height = cv.height;
-  textContext.setTransform(1, 0, 0, 1, 0, 0);
-  textContext.clearRect(0, 0, tc.width, tc.height);
-  textContext.scale(dpr, dpr);
-  textContext.fillStyle = '#2b2540';
-  textContext.textBaseline = 'middle';
-  if ('fontKerning' in textContext) textContext.fontKerning = 'normal';
-  if ('textRendering' in textContext) textContext.textRendering = 'geometricPrecision';
-  const scrollOffset = sm ? cur : scrollY;
-  $$('.ln').forEach(function (line) {
-    const rect = line.getBoundingClientRect();
-    const style = getComputedStyle(line);
-    const fontSizePx = parseFloat(style.fontSize) || 80;
-    const lsPx = parseFloat(style.letterSpacing) || (-0.05 * fontSizePx);
-    if ('letterSpacing' in textContext) textContext.letterSpacing = '0px';
-    textContext.font = style.fontWeight + ' ' + style.fontSize + ' ' + style.fontFamily;
-    const widthZero = textContext.measureText(line.textContent).width;
-    if ('letterSpacing' in textContext) textContext.letterSpacing = lsPx.toFixed(2) + 'px';
-    const widthSpaced = textContext.measureText(line.textContent).width;
-    const xSnap = Math.round(rect.left * dpr) / dpr;
-    const ySnap = Math.round((rect.top + scrollOffset + rect.height * .52) * dpr) / dpr;
-    if (Math.abs(widthSpaced - widthZero) > 0.5 || !lsPx) {
-      textContext.fillText(line.textContent, xSnap, ySnap);
-    } else {
-      // Fallback for mobile browsers where Canvas 2D ignores negative letterSpacing
-      let cursorX = xSnap;
-      const chars = Array.from(line.textContent);
-      for (let i = 0; i < chars.length; i++) {
-        const ch = chars[i];
-        textContext.fillText(ch, cursorX, ySnap);
-        const adv = i < chars.length - 1
-          ? textContext.measureText(ch + chars[i + 1]).width - textContext.measureText(chars[i + 1]).width
-          : textContext.measureText(ch).width;
-        cursorX += adv + lsPx;
-      }
-    }
-  });
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  if (textureWidth !== tc.width || textureHeight !== tc.height) {
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tc);
-    textureWidth = tc.width;
-    textureHeight = tc.height;
-  } else {
-    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, tc);
+  if (!ok) { textDirty = false; return; }
+  if (!textureWidth) {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+    textureWidth = 1;
   }
   textDirty = false;
-  textVersion++;
   H.classList.add('gl');
 }
 
 // renderGraphics: Calculate shared sphere motion once, instead of per shader sample.
 function renderGraphics(time, amount, entrance) {
-  const isMobileHero = !fine || viewportWidth <= 820;
   spheres[0] = mx * 1.875;
   spheres[1] = my * 1.875;
   spheres[2] = 0;
@@ -2631,7 +2589,7 @@ function renderGraphics(time, amount, entrance) {
   gl.uniform1f(U.t, time);
   gl.uniform1f(U.s, Math.round(cur * dpr));
   gl.uniform1f(U.f, amount);
-  gl.uniform1f(U.g, isMobileHero ? 0 : entrance);
+  gl.uniform1f(U.g, 0);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
 
@@ -3033,7 +2991,7 @@ function applyPreferences() {
     H.classList.toggle('sm', sm);
     W.style.transform = '';
     document.body.style.height = '';
-    cur = tgt = position;
+    cur = tgt = marqueeScroll = position;
     if (sm) document.body.style.height = W.scrollHeight + 'px';
     scrollTo({ top: position, behavior: 'auto' });
   }
@@ -3131,6 +3089,13 @@ function currentAmount() {
   return Math.max(hero, footer) * entranceAmount();
 }
 
+const lastTiltStyle = Object.create(null);
+function updateTiltStyle(name, value) {
+  if (lastTiltStyle[name] === value) return;
+  lastTiltStyle[name] = value;
+  H.style.setProperty(name, value);
+}
+
 function frame(now) {
   frameRequest = 0;
   const dt = Math.max(0.001, Math.min((now - last) / 1000, .05));
@@ -3170,15 +3135,15 @@ function frame(now) {
 
   /* Whole-webpage phone tilt on phones (per-section local 3D perspective + parallax) */
   if (isPhoneMode && !sceneCovered) {
-    H.style.setProperty('--wt-rx', clamp(-tiltY * 3.8, -4.5, 4.5).toFixed(2) + 'deg');
-    H.style.setProperty('--wt-ry', clamp(tiltX * 4.6, -5.5, 5.5).toFixed(2) + 'deg');
-    H.style.setProperty('--wt-tx', clamp(tiltX * 7.5, -9, 9).toFixed(1) + 'px');
-    H.style.setProperty('--wt-ty', clamp(tiltY * 5.5, -7, 7).toFixed(1) + 'px');
+    updateTiltStyle('--wt-rx', clamp(-tiltY * 3.8, -4.5, 4.5).toFixed(2) + 'deg');
+    updateTiltStyle('--wt-ry', clamp(tiltX * 4.6, -5.5, 5.5).toFixed(2) + 'deg');
+    updateTiltStyle('--wt-tx', clamp(tiltX * 7.5, -9, 9).toFixed(1) + 'px');
+    updateTiltStyle('--wt-ty', clamp(tiltY * 5.5, -7, 7).toFixed(1) + 'px');
   } else if (!isPhoneMode) {
-    H.style.setProperty('--wt-rx', '0deg');
-    H.style.setProperty('--wt-ry', '0deg');
-    H.style.setProperty('--wt-tx', '0px');
-    H.style.setProperty('--wt-ty', '0px');
+    updateTiltStyle('--wt-rx', '0deg');
+    updateTiltStyle('--wt-ry', '0deg');
+    updateTiltStyle('--wt-tx', '0px');
+    updateTiltStyle('--wt-ty', '0px');
   }
 
   /* WebGL 3D liquid glass spheres — driven by pointer on PC and phone tilt on phones */
@@ -3200,12 +3165,15 @@ function frame(now) {
     if (ok && textureWidth && !sceneCovered) renderGraphics(time, currentAmount(), entranceAmount());
   }
 
+  // Match desktop's eased scroll response while leaving native touch scrolling intact.
+  marqueeScroll = sm ? cur : marqueeScroll + (tgt - marqueeScroll) * damp(6.5);
+  const marqueeVelocity = sm ? vel : tgt - marqueeScroll;
   rows.forEach(function (row) {
-    row.x += row.direction * (36 + Math.abs(vel) * 7) * dt;
+    row.x += row.direction * (36 + Math.abs(marqueeVelocity) * 7) * dt;
     if (row.x <= -row.width) row.x += row.width;
     if (row.x > 0) row.x -= row.width;
     if (!sceneCovered) {
-      row.el.style.transform = 'translate3d(' + row.x.toFixed(2) + 'px,0,0) skewX(' + clamp(-vel * .12, -8, 8).toFixed(2) + 'deg)';
+      row.el.style.transform = 'translate3d(' + row.x.toFixed(2) + 'px,0,0) skewX(' + clamp(-marqueeVelocity * .12, -8, 8).toFixed(2) + 'deg)';
       row.dirty = false;
     }
   });
@@ -3402,7 +3370,7 @@ function prepareReloadStart() {
   if (location.hash && location.hash !== '#top') safeReplaceState(history.state, '#top');
   function resetReloadPosition() {
     scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    cur = tgt = 0;
+    cur = tgt = marqueeScroll = 0;
     vel = 0;
     lastScroll = -1;
     W.style.transform = '';

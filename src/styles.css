@@ -257,8 +257,12 @@ button {
 }
 
 @media(pointer:fine) and (min-width:821px) {
-  .gl .hero h1 {
-    color:transparent
+  html.js .hero h1 {
+    opacity:0;
+    transition:opacity 1.5s var(--out)
+  }
+  html.js.ready .hero h1 {
+    opacity:1
   }
 }
 
