@@ -10,8 +10,8 @@ vec3 bgc(vec2 q){vec2 w=q*2.-1.;float a=t*.15+s*.0006;
  vec3 A=vec3(.80,.72,1.),B=vec3(1.,.83,.76),C=vec3(.74,.95,.86),D=vec3(.75,.88,1.);
  float x=sin(w.x*1.6+a*3.+sin(w.y*2.+a*2.))*.5+.5,y=sin(w.y*1.4-a*2.5+cos(w.x*2.3-a))*.5+.5;
  return mix(mix(mix(A,B,x),mix(C,D,x),y),vec3(.985,.972,1.),.38);}
-// Scene sample — Combine the background with the heading texture.
-vec3 scene(vec2 q){vec4 k=texture2D(tx,vec2(q.x,q.y-s/r.y+(1.-g)*(1.-g)*.2));return mix(bgc(q),k.rgb,k.a*g);}
+// The DOM heading sits above the canvas; the shader samples only the background.
+vec3 scene(vec2 q){return bgc(q);}
 // Bounds — Reject impossible rays without changing any candidate march steps.
 bool possibleHit(vec3 origin,vec3 direction){
  vec3 low=balls[0].xyz-vec3(balls[0].w),high=balls[0].xyz+vec3(balls[0].w);

@@ -1,0 +1,8 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const template=fs.readFileSync('src/template.html','utf8'),styles=fs.readFileSync('src/styles.css','utf8'),interaction=fs.readFileSync('src/interaction.js','utf8'),graphics=fs.readFileSync('src/graphics.js','utf8');
+const init=template.match(/<script>(document\.documentElement\.classList\.add\('booting'\).*?)<\/script>/s);assert(init,'boot cover starts in head');
+function boot(preexisting){let names=new Set(preexisting),timer,cls={add(...x){x.forEach(v=>names.add(v))},remove(...x){x.forEach(v=>names.delete(v))},contains(x){return names.has(x)}};vm.runInNewContext(init[1],{document:{documentElement:{classList:cls}},setTimeout(fn,ms){assert.equal(ms,8000);timer=fn}});return {names,timer};}
+let a=boot(['js']);assert(a.names.has('booting'));a.timer();assert(!a.names.has('js')&&!a.names.has('booting')&&a.names.has('rd'));
+let b=boot(['js','ready']);b.timer();assert(b.names.has('js')&&b.names.has('ready'));
+assert(styles.includes('html.booting:not(.ready) body::before'));assert(styles.includes('.js #ld,html.booting #ld'));assert(interaction.includes("H.classList.remove('booting')"));assert(interaction.includes('sm ? marqueeVelocity : marqueeVelocity * .85'));assert(graphics.includes('vec3 scene(vec2 q){return bgc(q);}'));
+const html=fs.readFileSync('dist/portfolio.html','utf8');assert(html.indexOf("classList.add('booting')")<html.indexOf('<body>'));assert(html.includes('href="FahadDubush_CV.pdf"'));for(const f of ['dist/FahadDubush_CV.pdf','dist/favicon.png','dist/social-preview.png'])assert(fs.existsSync(f));console.log('Boot recovery, loading cover, scroll speed, shader and asset checks passed');

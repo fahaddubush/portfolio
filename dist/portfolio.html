@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>document.documentElement.classList.add('booting');setTimeout(function(){var h=document.documentElement;if(!h.classList.contains('ready')){h.classList.remove('booting','js');h.classList.add('rd')}},8000);</script>
 <title>Fahad Dubush Portfolio</title>
 <meta name="description" content="Portfolio of AI projects, autonomous agents, multimodal systems, and on-device models.">
 <link rel="canonical" href="https://fahaddubush.tech/">
@@ -132,8 +133,18 @@ button {
   overflow:hidden
 }
 
-.js #ld {
+.js #ld,html.booting #ld {
   display:grid
+}
+
+/* Keep the entire overscroll area covered until the curtains begin to open. */
+html.booting:not(.ready) body::before {
+  content:'';
+  position:fixed;
+  inset:-150vh -100vw;
+  z-index:99;
+  pointer-events:none;
+  background:linear-gradient(135deg,var(--lilac),var(--peach),var(--mint))
 }
 
 #ld>svg {
@@ -1166,6 +1177,14 @@ footer small {
   }
   footer {
     padding:14vh 6vw calc(12vh + env(safe-area-inset-bottom))
+  }
+}
+
+/* Landscape phones may expose a side cutout when viewport-fit is cover. */
+@media(max-width:820px) {
+  .hero,.sec,footer {
+    padding-left:max(6vw,env(safe-area-inset-left));
+    padding-right:max(6vw,env(safe-area-inset-right))
   }
 }
 
@@ -2479,8 +2498,8 @@ vec3 bgc(vec2 q){vec2 w=q*2.-1.;float a=t*.15+s*.0006;
  vec3 A=vec3(.80,.72,1.),B=vec3(1.,.83,.76),C=vec3(.74,.95,.86),D=vec3(.75,.88,1.);
  float x=sin(w.x*1.6+a*3.+sin(w.y*2.+a*2.))*.5+.5,y=sin(w.y*1.4-a*2.5+cos(w.x*2.3-a))*.5+.5;
  return mix(mix(mix(A,B,x),mix(C,D,x),y),vec3(.985,.972,1.),.38);}
-// Scene sample — Combine the background with the heading texture.
-vec3 scene(vec2 q){vec4 k=texture2D(tx,vec2(q.x,q.y-s/r.y+(1.-g)*(1.-g)*.2));return mix(bgc(q),k.rgb,k.a*g);}
+// The DOM heading sits above the canvas; the shader samples only the background.
+vec3 scene(vec2 q){return bgc(q);}
 // Bounds — Reject impossible rays without changing any candidate march steps.
 bool possibleHit(vec3 origin,vec3 direction){
  vec3 low=balls[0].xyz-vec3(balls[0].w),high=balls[0].xyz+vec3(balls[0].w);
@@ -3168,8 +3187,9 @@ function frame(now) {
   // Match desktop's eased scroll response while leaving native touch scrolling intact.
   marqueeScroll = sm ? cur : marqueeScroll + (tgt - marqueeScroll) * damp(6.5);
   const marqueeVelocity = sm ? vel : tgt - marqueeScroll;
+  const marqueeSpeed = sm ? marqueeVelocity : marqueeVelocity * .85;
   rows.forEach(function (row) {
-    row.x += row.direction * (36 + Math.abs(marqueeVelocity) * 7) * dt;
+    row.x += row.direction * (36 + Math.abs(marqueeSpeed) * 7) * dt;
     if (row.x <= -row.width) row.x += row.width;
     if (row.x > 0) row.x -= row.width;
     if (!sceneCovered) {
@@ -3315,6 +3335,7 @@ let entranceFinished = false;
 function finishEntrance() {
   if (entranceFinished) return;
   entranceFinished = true;
+  H.classList.remove('booting');
   if (!dialogOpen && !cvOpen) sceneCovered = false;
   $('#ld')?.remove();
   H.classList.add('ready', 'rd');

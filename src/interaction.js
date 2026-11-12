@@ -565,8 +565,9 @@ function frame(now) {
   // Match desktop's eased scroll response while leaving native touch scrolling intact.
   marqueeScroll = sm ? cur : marqueeScroll + (tgt - marqueeScroll) * damp(6.5);
   const marqueeVelocity = sm ? vel : tgt - marqueeScroll;
+  const marqueeSpeed = sm ? marqueeVelocity : marqueeVelocity * .85;
   rows.forEach(function (row) {
-    row.x += row.direction * (36 + Math.abs(marqueeVelocity) * 7) * dt;
+    row.x += row.direction * (36 + Math.abs(marqueeSpeed) * 7) * dt;
     if (row.x <= -row.width) row.x += row.width;
     if (row.x > 0) row.x -= row.width;
     if (!sceneCovered) {
@@ -712,6 +713,7 @@ let entranceFinished = false;
 function finishEntrance() {
   if (entranceFinished) return;
   entranceFinished = true;
+  H.classList.remove('booting');
   if (!dialogOpen && !cvOpen) sceneCovered = false;
   $('#ld')?.remove();
   H.classList.add('ready', 'rd');

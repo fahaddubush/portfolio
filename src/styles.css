@@ -106,8 +106,18 @@ button {
   overflow:hidden
 }
 
-.js #ld {
+.js #ld,html.booting #ld {
   display:grid
+}
+
+/* Keep the entire overscroll area covered until the curtains begin to open. */
+html.booting:not(.ready) body::before {
+  content:'';
+  position:fixed;
+  inset:-150vh -100vw;
+  z-index:99;
+  pointer-events:none;
+  background:linear-gradient(135deg,var(--lilac),var(--peach),var(--mint))
 }
 
 #ld>svg {
@@ -1140,6 +1150,14 @@ footer small {
   }
   footer {
     padding:14vh 6vw calc(12vh + env(safe-area-inset-bottom))
+  }
+}
+
+/* Landscape phones may expose a side cutout when viewport-fit is cover. */
+@media(max-width:820px) {
+  .hero,.sec,footer {
+    padding-left:max(6vw,env(safe-area-inset-left));
+    padding-right:max(6vw,env(safe-area-inset-right))
   }
 }
 
