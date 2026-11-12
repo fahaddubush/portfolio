@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const template=fs.readFileSync('src/template.html','utf8'),styles=fs.readFileSync('src/styles.css','utf8'),interaction=fs.readFileSync('src/interaction.js','utf8'),graphics=fs.readFileSync('src/graphics.js','utf8');
 const init=template.match(/<script>(document\.documentElement\.classList\.add\('booting'\).*?)<\/script>/s);assert(init,'boot cover starts in head');
-function boot(preexisting){let names=new Set(preexisting),timer,theme={content:null,setAttribute(k,v){assert.equal(k,'content');this.content=v}},cls={add(...x){x.forEach(v=>names.add(v))},remove(...x){x.forEach(v=>names.delete(v))},contains(x){return names.has(x)}};vm.runInNewContext(init[1],{document:{documentElement:{classList:cls},querySelector(){return theme}},setTimeout(fn,ms){assert.equal(ms,8000);timer=fn}});return {names,timer,theme};}
+function boot(preexisting){let names=new Set(preexisting),timer,theme={content:null,setAttribute(k,v){assert.equal(k,'content');this.content=v}},cls={add(...x){x.forEach(v=>names.add(v))},remove(...x){x.forEach(v=>names.delete(v))},contains(x){return names.has(x)}};vm.runInNewContext(init[1],{window:{},document:{documentElement:{classList:cls},querySelector(){return theme}},setTimeout(fn,ms){assert.equal(ms,8000);timer=fn;return 9}});return {names,timer,theme};}
 let a=boot(['js']);assert(a.names.has('booting'));a.timer();assert(!a.names.has('js')&&!a.names.has('booting')&&a.names.has('rd'));assert.equal(a.theme.content,'#e9e0f1');
 let b=boot(['js','ready']);b.timer();assert(b.names.has('js')&&b.names.has('ready'));
 let c=boot(['js','welcome-pending']);c.timer();assert(c.names.has('js')&&c.names.has('booting'));

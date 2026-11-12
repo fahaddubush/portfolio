@@ -728,7 +728,7 @@ function finishEntrance() {
   if (location.hash) route();
 }
 
-async function beginEntrance() {
+function beginEntrance() {
   sceneCovered = true;
   let fontsReady = false;
   const fonts = document.fonts ? document.fonts.ready : Promise.resolve();
@@ -739,7 +739,7 @@ async function beginEntrance() {
     const dt = Math.max(0, Math.min((now - previous) / 1000, .05));
     previous = now;
     if (phase === 0) {
-      value = Math.min(100, value + ((fontsReady ? 100.6 : 92) - value) * (1 - Math.exp(-dt * 5.2)));
+      value = Math.min(100, value + ((fontsReady ? 100.6 : 92) - value) * (1 - Math.exp(-dt * 4.5)));
       setDigits(value);
       if (fontsReady && value >= 100) {
         phase = 1;
@@ -810,11 +810,25 @@ if (showMobileWelcome) {
   const skip = $('#welcome-skip');
   let chosen = false;
   function enter() {
-    welcome.hidden = true;
-    H.classList.remove('welcome-pending');
-    inertBackground(false);
-    beginEntrance();
-    wake();
+    enable.disabled = true;
+    skip.disabled = true;
+    setCurtain(0);
+    setDigits(0);
+    welcome.classList.add('leaving');
+    setTimeout(function () {
+      welcome.hidden = true;
+      inertBackground(false);
+      try {
+        beginEntrance();
+        clearTimeout(window.__portfolioBootWatchdog);
+      } catch (error) {
+        H.classList.remove('booting', 'js');
+        H.classList.add('rd');
+        console.warn('Portfolio entrance failed:', error);
+      }
+      H.classList.remove('welcome-pending');
+      wake();
+    }, rm ? 0 : 650);
   }
   enable.addEventListener('click', function () {
     if (chosen) return;

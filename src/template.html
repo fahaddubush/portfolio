@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<script>document.documentElement.classList.add('booting');setTimeout(function(){var h=document.documentElement;if(!h.classList.contains('ready')&&!h.classList.contains('welcome-pending')){h.classList.remove('booting','js');h.classList.add('rd');var t=document.querySelector('meta[name="theme-color"]');if(t)t.setAttribute('content','#e9e0f1')}},8000);</script>
+<script>document.documentElement.classList.add('booting');window.__portfolioBootWatchdog=setTimeout(function(){var h=document.documentElement;if(!h.classList.contains('ready')&&!h.classList.contains('welcome-pending')){h.classList.remove('booting','js');h.classList.add('rd');var t=document.querySelector('meta[name="theme-color"]');if(t)t.setAttribute('content','#e9e0f1')}},8000);</script>
 <title>{{TITLE}}</title>
 <meta name="description" content="Portfolio of AI projects, autonomous agents, multimodal systems, and on-device models.">
 <link rel="canonical" href="https://fahaddubush.tech/">
@@ -34,8 +34,9 @@
 <div id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="welcome-title" aria-describedby="welcome-description">
   <div class="welcome-card glass">
     <i class="welcome-orb" aria-hidden="true"></i>
+    <span class="welcome-eyebrow">A LITTLE SOMETHING BEFORE WE BEGIN</span>
     <h2 id="welcome-title">Welcome in.</h2>
-    <p id="welcome-description">Enjoy the portfolio with sound and motion, or continue without them.</p>
+    <p id="welcome-description">Add sound and tilt to the experience, or explore quietly.</p>
     <button class="btn glass" id="welcome-enable" type="button">Enter with sound &amp; motion</button>
     <button class="btn glass" id="welcome-skip" type="button">Continue without them</button>
   </div>
