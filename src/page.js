@@ -126,7 +126,7 @@ function artwork(colors) {
 
 // buildContent: Synchronize the static fallback with the editable SITE settings.
 function buildContent() {
-  document.title = SITE.name + ' | AI engineer';
+  document.title = SITE.name + ' Portfolio';
   $('#ldn').textContent = SITE.name;
   $('#h1').innerHTML = SITE.lines.map(function (line) { return '<span class="ln">' + escapeHTML(line) + '</span>'; }).join(' ');
   $('#intro').innerHTML = SITE.intro;
