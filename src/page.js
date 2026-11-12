@@ -80,7 +80,7 @@ let words = [];
 /* Phone Tilt state — Gyroscope deviceorientation + touch/scroll fallback on phones */
 let hasGyro = false;
 let gyroPermitted = false;
-const showMobileWelcome = matchMedia('(pointer: coarse)').matches || (navigator.maxTouchPoints > 0 && innerWidth <= 820);
+const showMobileWelcome = window.__portfolioMobileWelcome === true;
 let motionEnabled = !showMobileWelcome;
 let baseBeta = null;
 let baseGamma = null;

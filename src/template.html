@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<script>document.documentElement.classList.add('booting');window.__portfolioBootWatchdog=setTimeout(function(){var h=document.documentElement;if(!h.classList.contains('ready')&&!h.classList.contains('welcome-pending')){h.classList.remove('booting','js');h.classList.add('rd');var t=document.querySelector('meta[name="theme-color"]');if(t)t.setAttribute('content','#e9e0f1')}},8000);</script>
+<script>document.documentElement.classList.add('booting');window.__portfolioMobileWelcome=matchMedia('(pointer: coarse)').matches||(navigator.maxTouchPoints>0&&innerWidth<=820);if(window.__portfolioMobileWelcome)document.documentElement.classList.add('welcome-boot');window.__portfolioBootWatchdog=setTimeout(function(){var h=document.documentElement;if(!h.classList.contains('ready')&&!h.classList.contains('welcome-pending')){h.classList.remove('booting','js','welcome-boot');h.classList.add('rd');var t=document.querySelector('meta[name="theme-color"]');if(t)t.setAttribute('content','#e9e0f1')}},8000);</script>
 <title>{{TITLE}}</title>
 <meta name="description" content="Portfolio of AI projects, autonomous agents, multimodal systems, and on-device models.">
 <link rel="canonical" href="https://fahaddubush.tech/">
@@ -31,7 +31,7 @@
 <body>
 <!-- Entrance — Original odometer and three liquid curtains. -->
 <div id="ld" aria-hidden="true"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cdb8ff"/><stop offset=".55" stop-color="#ffd3c2"/><stop offset="1" stop-color="#bdf2dc"/></linearGradient></defs><path id="lp3" fill="#bdf2dc" d="M0 0H100V100Q50 100 0 100Z"/><path id="lp2" fill="#ffd3c2" d="M0 0H100V100Q50 100 0 100Z"/><path id="lp1" fill="url(#lg)" d="M0 0H100V100Q50 100 0 100Z"/></svg><div class="c"><div class="num"><div class="od"><div></div><div></div><div></div></div><b class="pc">%</b></div></div></div>
-<div id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="welcome-title" aria-describedby="welcome-description">
+<div id="welcome" hidden role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="welcome-title" aria-describedby="welcome-description">
   <div class="welcome-card glass">
     <i class="welcome-orb" aria-hidden="true"></i>
     <span class="welcome-eyebrow">A LITTLE SOMETHING BEFORE WE BEGIN</span>

@@ -812,6 +812,7 @@ if (showMobileWelcome) {
   function enter() {
     enable.disabled = true;
     skip.disabled = true;
+    H.classList.remove('welcome-boot');
     setCurtain(0);
     setDigits(0);
     welcome.classList.add('leaving');
@@ -852,7 +853,7 @@ if (showMobileWelcome) {
   H.classList.add('welcome-pending');
   welcome.hidden = false;
   inertBackground(true);
-  enable.focus({ preventScroll: true });
+  welcome.focus({ preventScroll: true });
 } else {
   beginEntrance();
 }
