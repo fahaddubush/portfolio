@@ -81,6 +81,8 @@ let words = [];
 /* Phone Tilt state — Gyroscope deviceorientation + touch/scroll fallback on phones */
 let hasGyro = false;
 let gyroPermitted = false;
+const showMobileWelcome = matchMedia('(pointer: coarse)').matches || (navigator.maxTouchPoints > 0 && innerWidth <= 820);
+let motionEnabled = !showMobileWelcome;
 let baseBeta = null;
 let baseGamma = null;
 let rawTiltX = 0;
@@ -124,7 +126,6 @@ function artwork(colors) {
 // buildContent: Synchronize the static fallback with the editable SITE settings.
 function buildContent() {
   document.title = SITE.name + ' Portfolio';
-  $('#ldn').textContent = SITE.name;
   $('#h1').innerHTML = SITE.lines.map(function (line) { return '<span class="ln">' + escapeHTML(line) + '</span>'; }).join(' ');
   $('#intro').innerHTML = SITE.intro;
   $('#st').textContent = SITE.status;
@@ -154,28 +155,18 @@ function buildContent() {
 }
 buildContent();
 
-/* 2b. Soundscape initialization — Enabled by default; unlocks automatically on first interaction. */
-let userMutedSound = false;
+/* 2b. Sound is enabled only when it is actually playing. */
+let userMutedSound = showMobileWelcome;
 const soundscape = window.createPastelSoundscape({
   onStateChange: function (state) {
-    const isOn = !userMutedSound && state.enabled;
+    const isOn = !userMutedSound && state.active;
     sndBtn.setAttribute('aria-pressed', String(isOn));
     sndLbl.textContent = isOn ? 'Sound on' : 'Sound off';
   }
 });
 
-soundscape.start();
-
-function unlockDefaultAudio() {
-  if (!userMutedSound) {
-    const st = soundscape.getState();
-    if (!st.active) soundscape.start();
-  }
-  requestPhoneTiltPermission();
-}
-['pointerdown', 'touchstart', 'wheel', 'keydown', 'click'].forEach(function (evt) {
-  window.addEventListener(evt, unlockDefaultAudio, { passive: true });
-});
+if (showMobileWelcome) soundscape.stop();
+else soundscape.start();
 
 sndBtn.addEventListener('click', function (event) {
   event.stopPropagation();
@@ -194,13 +185,17 @@ sndBtn.addEventListener('pointerenter', function () {
 
 /* 2c. Phone Tilt & Gyroscope Controller — Card tilt + whole-webpage tilt on phones. */
 function requestPhoneTiltPermission() {
-  if (gyroPermitted) return;
+  if (gyroPermitted) { motionEnabled = true; return Promise.resolve(true); }
   if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-    DeviceOrientationEvent.requestPermission().then(function (status) {
-      if (status === 'granted') gyroPermitted = true;
-    }).catch(function () {});
+    try {
+      return Promise.resolve(DeviceOrientationEvent.requestPermission()).then(function (status) {
+        gyroPermitted = motionEnabled = status === 'granted';
+        return gyroPermitted;
+      }).catch(function () { motionEnabled = false; return false; });
+    } catch (_) { motionEnabled = false; return Promise.resolve(false); }
   } else {
-    gyroPermitted = true;
+    gyroPermitted = motionEnabled = true;
+    return Promise.resolve(true);
   }
 }
 
@@ -221,11 +216,13 @@ function applyGyroAngles(g, b) {
 }
 
 window.addEventListener('deviceorientation', function (event) {
+  if (!motionEnabled) return;
   if (event.gamma === null && event.beta === null) return;
   applyGyroAngles(event.gamma || 0, event.beta || 0);
 }, { passive: true });
 
 window.addEventListener('devicemotion', function (event) {
+  if (!motionEnabled) return;
   if (hasGyro) return;
   const acc = event.accelerationIncludingGravity;
   if (!acc || (acc.x === null && acc.y === null)) return;

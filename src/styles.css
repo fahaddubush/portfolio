@@ -140,6 +140,30 @@ html.booting:not(.ready) body::before {
   transition:transform 1.1s var(--ease),opacity .7s,filter .9s
 }
 
+#welcome:not([hidden]) {
+  position:fixed;
+  inset:0;
+  z-index:130;
+  display:grid;
+  place-items:center;
+  padding:calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+  background:linear-gradient(135deg,var(--lilac),var(--peach),var(--mint))
+}
+
+.welcome-card {
+  width:min(100%,27rem);
+  padding:2rem;
+  border-radius:2rem;
+  display:grid;
+  justify-items:center;
+  text-align:center;
+  gap:1rem
+}
+.welcome-card h2 { font:800 clamp(2.3rem,10vw,3.5rem)/1 var(--hd); letter-spacing:-.04em; margin:0 }
+.welcome-card p { max-width:28ch; color:var(--mut) }
+.welcome-card .btn { width:100%; text-align:center }
+.welcome-orb { display:block; width:3rem; height:3rem; border-radius:50%; background:conic-gradient(var(--lilac),var(--peach),var(--mint),var(--sky),var(--lilac)); border:1px solid rgba(255,255,255,.9); box-shadow:inset 0 1px 8px rgba(255,255,255,.8),0 8px 22px rgba(110,80,200,.18) }
+
 #ld .c.go {
   transform:translateY(-16vh) scale(1.14);
   opacity:0;

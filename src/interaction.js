@@ -565,7 +565,7 @@ function frame(now) {
   // Match desktop's eased scroll response while leaving native touch scrolling intact.
   marqueeScroll = sm ? cur : marqueeScroll + (tgt - marqueeScroll) * damp(6.5);
   const marqueeVelocity = sm ? vel : tgt - marqueeScroll;
-  const marqueeSpeed = sm ? marqueeVelocity : marqueeVelocity * .85;
+  const marqueeSpeed = sm ? marqueeVelocity : marqueeVelocity * .75;
   rows.forEach(function (row) {
     row.x += row.direction * (36 + Math.abs(marqueeSpeed) * 7) * dt;
     if (row.x <= -row.width) row.x += row.width;
@@ -804,5 +804,42 @@ cvModal.inert = true;
 started = true;
 applyPreferences();
 initGraphics();
-beginEntrance();
+if (showMobileWelcome) {
+  const welcome = $('#welcome');
+  const enable = $('#welcome-enable');
+  const skip = $('#welcome-skip');
+  let chosen = false;
+  function enter() {
+    welcome.hidden = true;
+    H.classList.remove('welcome-pending');
+    inertBackground(false);
+    beginEntrance();
+    wake();
+  }
+  enable.addEventListener('click', function () {
+    if (chosen) return;
+    chosen = true;
+    enable.disabled = true;
+    skip.disabled = true;
+    // Both operations must start inside the same trusted gesture on iOS.
+    const motion = requestPhoneTiltPermission();
+    userMutedSound = false;
+    const audio = soundscape.start();
+    Promise.allSettled([motion, audio]).then(enter);
+  });
+  skip.addEventListener('click', function () {
+    if (chosen) return;
+    chosen = true;
+    motionEnabled = false;
+    userMutedSound = true;
+    soundscape.stop();
+    enter();
+  });
+  H.classList.add('welcome-pending');
+  welcome.hidden = false;
+  inertBackground(true);
+  enable.focus({ preventScroll: true });
+} else {
+  beginEntrance();
+}
 wake();
