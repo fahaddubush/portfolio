@@ -710,6 +710,10 @@ function setDigits(value) {
 }
 
 let entranceFinished = false;
+function setPortfolioTheme() {
+  const theme = document.querySelector('meta[name="theme-color"]');
+  if (theme) theme.setAttribute('content', '#e9e0f1');
+}
 function finishEntrance() {
   if (entranceFinished) return;
   entranceFinished = true;
@@ -717,6 +721,7 @@ function finishEntrance() {
   if (!dialogOpen && !cvOpen) sceneCovered = false;
   $('#ld')?.remove();
   H.classList.add('ready', 'rd');
+  setPortfolioTheme();
   document.body.classList.add('ready');
   go = true;
   invalidateLayout();
@@ -742,6 +747,7 @@ async function beginEntrance() {
         $('#ld .c').classList.add('go');
         $('#ld').style.pointerEvents = 'none';
         H.classList.add('ready', 'rd');
+        setPortfolioTheme();
         document.body.classList.add('ready');
         sceneCovered = false;
         go = true;

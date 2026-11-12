@@ -27,7 +27,12 @@ html {
   color:var(--ink);
   font:400 1.0625rem/1.55 'Hanken Grotesk',system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;
-  background:radial-gradient(60% 50% at 20% 10%,var(--lilac),transparent),radial-gradient(50% 50% at 90% 30%,var(--peach),transparent),radial-gradient(60% 60% at 40% 100%,var(--mint),var(--paper))
+  background:linear-gradient(145deg,#e3d5f7 0%,#f6dfe2 48%,#d7edef 100%) fixed
+}
+
+/* Match the root and overscroll area to the loader until the curtain opens. */
+html.booting:not(.ready) {
+  background:linear-gradient(135deg,var(--lilac),var(--peach),var(--mint)) fixed
 }
 
 html:not(.rd),html.lock {
