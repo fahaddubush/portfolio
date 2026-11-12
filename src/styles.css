@@ -51,6 +51,10 @@ button {
   cursor:pointer
 }
 
+@media (hover:none), (pointer:coarse) {
+  a, button { -webkit-tap-highlight-color:transparent }
+}
+
 :focus-visible {
   outline:2px solid var(--ink);
   outline-offset:3px;

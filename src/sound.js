@@ -28,6 +28,7 @@
     let suspendTimer = null;
     let lastAccent = -Infinity;
     let activationPromise = null;
+    let returnCuePending = false;
 
     function getState() {
       return {
@@ -302,7 +303,10 @@
       needsGesture = false;
       ramp(master.gain, volume * 0.34, 0.35);
       ramp(ambient.gain, 0.82, returning ? 1.6 : 2.8);
-      if (returning) bubble('return');
+      if (returning || returnCuePending) {
+        bubble('return');
+        returnCuePending = false;
+      }
       air();
       pad();
       later(sparkle, 1700);
@@ -341,6 +345,7 @@
       ++revision;
       activationPromise = null;
       enabled = false;
+      returnCuePending = false;
       active = false;
       needsGesture = false;
       clearTimers();
@@ -383,6 +388,7 @@
       const wasAway = away;
       away = false;
       if (!enabled) { emit(); return getState(); }
+      if (wasAway) returnCuePending = true;
       if (!wasAway && active) return getState();
       if (!wasAway && activationPromise) return activationPromise;
       return beginActivation(wasAway);
@@ -427,9 +433,6 @@
     });
     listen(global, 'pagehide', () => {
       leave();
-      clearTimers();
-      stopVoices();
-      suspendQuietly();
     });
     listen(global, 'pageshow', () => { if (!document.hidden && away) void returnToPage(); });
 
